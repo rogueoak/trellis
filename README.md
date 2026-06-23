@@ -102,8 +102,9 @@ AGENTS.md                 a small Trellis block points your agents at the rules
 
 The commit-msg hook is a dependency-free POSIX `sh` script - it checks Conventional Commit format
 with nothing to install (no Node, no build step). If a `commit-msg` hook already exists, Trellis
-chains onto it rather than replacing it. If Trellis has to create `AGENTS.md` from scratch, it
-also points `CLAUDE.md` and `GEMINI.md` at it so every agent reads the same file.
+keeps it as `commit-msg.local` and chains to it rather than replacing it. If Trellis has to create
+`AGENTS.md` from scratch, it also points `CLAUDE.md` and `GEMINI.md` at it so every agent reads the
+same file.
 
 ## Repo layout (this repo)
 

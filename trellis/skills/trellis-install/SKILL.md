@@ -65,24 +65,16 @@ If a previous install exists, prefer running `trellis-update` instead - it re-sy
    left untouched (so it would miss the block) - in that case also insert the block into it, or
    tell the developer to consolidate. Codex and Cursor read `AGENTS.md` natively.
 
-4. **Install the commit-msg hook** so commits are checked for Conventional Commit format. Copy it
-   into the repo's *resolved* hooks dir. If a foreign `commit-msg` hook already exists, displace
-   it to `commit-msg.local` (once) and make Trellis's hook primary - it chains to `.local` after
-   its own check passes, so the existing hook is preserved without the "append after `exit 0`"
-   trap. Warn if a hook manager has redirected `core.hooksPath` (the copied hook would be
-   shadowed):
+4. **Install the commit-msg hook** so commits are checked for Conventional Commit format. Run the
+   shipped installer - one script (shared by install and update) that copies Trellis's hooks into
+   the repo's *resolved* hooks dir, displaces any foreign `commit-msg` hook to `commit-msg.local`
+   (Trellis becomes primary and chains to `.local` on pass, never clobbering it), and warns if a
+   hook manager has redirected `core.hooksPath`:
    ```sh
-   HOOKS="$(git rev-parse --git-path hooks)"; mkdir -p "$HOOKS"
-   if [ -e "$HOOKS/commit-msg" ] && ! grep -q 'Trellis commit-msg hook' "$HOOKS/commit-msg"; then
-     [ -e "$HOOKS/commit-msg.local" ] || mv "$HOOKS/commit-msg" "$HOOKS/commit-msg.local"
-   fi
-   cp "$SRC/hooks/commit-msg" "$HOOKS/commit-msg"
-   chmod +x "$HOOKS/commit-msg"; [ -e "$HOOKS/commit-msg.local" ] && chmod +x "$HOOKS/commit-msg.local"
-   if hp=$(git config core.hooksPath 2>/dev/null) && [ -n "$hp" ]; then
-     echo "warning: core.hooksPath is '$hp' (a hook manager like husky/lefthook); git runs hooks from there, so the commit-msg hook in $HOOKS may be shadowed - wire it into '$hp' too." >&2
-   fi
+   sh "$SRC/hooks/install-hooks.sh" "$SRC"
    ```
-   Tell the developer if you displaced a pre-existing `commit-msg` hook to `commit-msg.local`.
+   Pass on to the developer anything the installer reports (a displaced hook, or a set
+   `core.hooksPath`).
 
 5. **Confirm.** Verify the install actually took, then report:
    ```sh

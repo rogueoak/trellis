@@ -19,3 +19,9 @@
 - A git hook manager that sets `core.hooksPath` (husky, lefthook) makes git ignore `.git/hooks/`
   entirely - it is an override, not additive. A tool that installs hooks by copying must target
   `git rev-parse --git-path hooks` and warn when `core.hooksPath` is set. (spec 0003)
+- A delimiter followed by `.+` in a regex still matches whitespace-only input; when you mean
+  "non-empty content", anchor on a non-space char (e.g. `: .*[^[:space:]]`). (feedback 0005)
+- Git hooks must honor repo config like `core.commentChar` rather than hardcoding `#`, or they
+  misfire on repos that changed it. (feedback 0005)
+- Don't inline the same mutating shell in two skills; ship one script both call, so the safety
+  logic cannot drift between install and update. (feedback 0004)
