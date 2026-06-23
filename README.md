@@ -59,6 +59,26 @@ Later, pull updates with `/trellis-update`. On Codex, Gemini, and Cursor, if the
 resolve the plugin path on its own, the skill asks you to `export TRELLIS_SRC=<plugin root>`
 first.
 
+## Pairs with Spectra
+
+Trellis is the conventions. [Spectra](https://github.com/rogueoak/spectra) is the process -
+spec-driven development with review personas. They are separate tools that compose, and most
+rogueoak repos want both.
+
+They install the same way. Add Spectra's marketplace alongside Trellis's and install it too -
+on Claude Code:
+
+```text
+/plugin marketplace add rogueoak/spectra
+/plugin install spectra@spectra
+/reload-plugins
+/spectra-install
+```
+
+For Codex, Gemini, and Cursor, follow [Spectra's quick start](https://github.com/rogueoak/spectra#quick-start);
+the steps mirror Trellis's above. The two stay independent - update each on its own with
+`/trellis-update` and `/spectra-update`.
+
 ## The rules
 
 Two to start. More will grow on the trellis over time.

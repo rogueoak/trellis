@@ -1,81 +1,51 @@
-# 0002 - Distribute Spectra as a Trellis dependency
+# 0002 - Document the Trellis + Spectra pairing
 
 ## Problem
 
 A repo that adopts Trellis almost always wants Spectra too: Trellis is the conventions, Spectra
-is the process, and they compose. Today that means adding two marketplaces, installing two
-plugins, and running two install commands. One step should get both.
+is the process, and they compose. We explored making Trellis auto-install Spectra as a
+dependency so consumers install one thing instead of two.
+
+## Decision
+
+**Do not couple them. Document that consumers install both.** Only Claude Code can auto-install a
+declared dependency; Codex, Gemini CLI, and Cursor cannot. Delivering an automatic, no-vendoring,
+track-latest install across all four agents is not possible, and the alternatives (Claude-only
+auto-install, or embedding Spectra into Trellis) each give up something that matters more. So
+Trellis and Spectra stay independent, and the Trellis README explains the pairing and how to
+install both.
+
+## Cross-agent findings (the why)
+
+- **Claude Code** - `plugin.json` supports a `dependencies` array that auto-installs (plus
+  `allowCrossMarketplaceDependenciesOn` for cross-marketplace deps).
+- **Codex** - no dependency field; the manifest parser silently drops unknown keys. A marketplace
+  can list external sources, but each plugin installs separately.
+- **Gemini CLI** - no dependency field; one extension per `gemini extensions install`.
+- **Cursor** - no dependency field, and a marketplace `source` must be a relative path *inside the
+  same repo*, so it cannot even reference the external `rogueoak/spectra`.
 
 ## Outcome
 
-- Adding the Trellis marketplace and installing the `trellis` plugin **auto-installs** the
-  `spectra` plugin - no second marketplace, no second install.
-- `/trellis-install` scaffolds **both** into the repo in one run: Spectra's protocol, personas,
-  reflection hook, and host block, plus Trellis's rules and host block.
-- Updates keep both current.
+- The Trellis README explains the Trellis/Spectra relationship and shows how to install both.
+- No vendoring, no dependency wiring, no change to the install/update skills or manifests.
 
 ## Scope
 
 **In**
 
-- Root marketplace manifests list two plugins: `trellis` (local `./trellis`) and `spectra`
-  (external, sourced from `rogueoak/spectra`), so one `/plugin marketplace add rogueoak/trellis`
-  exposes both.
-- `trellis/.claude-plugin/plugin.json` declares a dependency on `spectra`; the marketplace adds
-  `allowCrossMarketplaceDependenciesOn` if the dependency resolves to a separate marketplace
-  name. Installing `trellis` then pulls `spectra` automatically.
-- `/trellis-install` runs Spectra's scaffold (reusing the installed `spectra` plugin's files, not
-  a vendored copy) and then the Trellis rules. Automatic, per the install-UX decision.
-- `/trellis-update` runs Spectra's update too (refreshes the installed Spectra scaffold) and then
-  its own, so one update command keeps both current.
-- Cross-agent: the dependency/marketplace wiring must be **verified to actually work on Claude
-  Code, OpenAI Codex, and Gemini CLI** (and Cursor), not just declared. Where an agent lacks
-  dependency auto-install, document a two-step fallback for that agent specifically.
+- A "Pairs with Spectra" section in the Trellis README: what each tool is, and how to install
+  Spectra alongside Trellis (pointing at Spectra's own quick start for the per-agent steps).
+- A learnings entry recording the cross-agent dependency finding so we do not re-research it.
 
 **Out**
 
-- Vendoring Spectra's content into Trellis (rejected: duplication + version drift). Trellis
-  re-lists and depends on Spectra; it does not copy it.
-- Any change to Spectra itself.
-
-## Approach
-
-- **Mechanism: native plugin dependencies (approach A), confirmed supported.** Claude Code
-  plugins support a `dependencies` array that auto-installs transitively, including across
-  marketplaces with an allowlist. The Trellis marketplace re-lists Spectra (external GitHub
-  source) so it is a single marketplace add; `trellis` depends on `spectra`.
-- **Repo scaffold.** The plugin dependency installs the Spectra *plugin* (its commands). To also
-  scaffold Spectra into the repo automatically, `/trellis-install` locates the installed Spectra
-  plugin root and runs its install steps, then its own. (The non-interactive-install limitation
-  does not bite us: the dependency handles the plugin layer at `/plugin install` time, and the
-  scaffold layer is plain file ops the skill already performs.)
-- **Coupling: track latest.** The marketplace source points at Spectra's default branch, so
-  Trellis users get current Spectra without a Trellis re-release. To keep an installed repo in
-  sync, `/trellis-update` also runs Spectra's update, so the repo's Spectra scaffold is refreshed
-  alongside the Trellis rules in one command.
-- **Validation spike first.** Before the full UX, confirm in a scratch setup that installing
-  `trellis` actually auto-installs `spectra` as documented (dependency `marketplace` field
-  semantics when re-listing an external plugin are the main unknown). If the spike fails, fall
-  back to approach B (one marketplace, two plugins, user installs both).
-
-## Risks / open questions
-
-- Does the dependency resolve correctly to a Spectra entry re-listed inside the Trellis
-  marketplace, or must it reference the original `spectra` marketplace via the allowlist? The
-  spike answers this.
-- How `/trellis-install` reliably finds the Spectra plugin root across agents (Claude exposes
-  `CLAUDE_SKILL_DIR` for Trellis's own skill, not Spectra's). May need a documented
-  `SPECTRA_SRC`/discovery step, or fall back to running `/spectra-install` as a second command.
-- Codex/Cursor/Gemini dependency support is less certain than Claude's; fallback documented.
+- Any plugin dependency wiring, marketplace re-listing of Spectra, or `allowCrossMarketplace...`.
+- Embedding/vendoring Spectra into Trellis.
+- Any change to `trellis-install` / `trellis-update`.
 
 ## Acceptance
 
-- [ ] `/plugin marketplace add rogueoak/trellis` then `/plugin install trellis@trellis` leaves
-      both `trellis` and `spectra` installed (verified in `/plugin list`).
-- [ ] `/trellis-install` leaves the repo with Spectra's scaffold (`docs/spectra/`, protocol,
-      personas, hook, Spectra host block) **and** Trellis's rules (`docs/rules/`, Trellis host
-      block), in one run.
-- [ ] `/trellis-update` refreshes both the Spectra scaffold and the Trellis rules in one run.
-- [ ] Trellis tracks the latest Spectra (marketplace source on Spectra's default branch).
-- [ ] The auto-install is confirmed to work on **Claude Code, OpenAI Codex, and Gemini CLI**
-      (and Cursor); for any agent where it does not, a fallback is documented.
+- [ ] The README documents the Trellis + Spectra pairing and how to install both.
+- [ ] No changes to manifests or skills.
+- [ ] The cross-agent dependency finding is captured in `docs/overview/learnings.md`.
