@@ -1,0 +1,17 @@
+{
+  "name": "trellis",
+  "owner": {
+    "name": "Matthew Maynes",
+    "email": "matthewmaynes@outlook.com"
+  },
+  "description": "Trellis - shared AI-agent conventions and templates for rogueoak projects.",
+  "plugins": [
+    {
+      "name": "trellis",
+      "source": "./trellis",
+      "description": "Install and maintain rogueoak's shared AI-agent rules and templates in your repo.",
+      "version": "0.1.0",
+      "keywords": ["conventions", "rules", "agents", "templates", "rogueoak"]
+    }
+  ]
+}
