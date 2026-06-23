@@ -55,7 +55,9 @@ Add the `rogueoak/trellis` marketplace (in-editor marketplace panel or `/add-plu
 `/trellis-install`.
 
 `/trellis-install` copies the rules into `docs/rules/` and points your `AGENTS.md` at them.
-Later, pull updates with `/trellis-update`.
+Later, pull updates with `/trellis-update`. On Codex, Gemini, and Cursor, if the agent does not
+resolve the plugin path on its own, the skill asks you to `export TRELLIS_SRC=<plugin root>`
+first.
 
 ## The rules
 
@@ -71,12 +73,14 @@ Two to start. More will grow on the trellis over time.
 ```
 docs/
   rules/
-    guidelines.md   how agents write and ship
-    language.md     the voice for public-facing writing
-AGENTS.md           points your agents at the rules (a small Trellis block)
+    guidelines.md    how agents write and ship
+    language.md      the voice for public-facing writing
+    .trellis-owned   which rules Trellis manages (so updates stay clean)
+AGENTS.md            a small Trellis block points your agents at the rules
 ```
 
-Nothing else. Trellis adds rules, not machinery.
+Nothing else - no scripts, no hooks, no build step. If Trellis has to create `AGENTS.md` from
+scratch, it also points `CLAUDE.md` and `GEMINI.md` at it so every agent reads the same file.
 
 ## Repo layout (this repo)
 

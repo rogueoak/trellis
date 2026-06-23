@@ -1,36 +1,59 @@
 ---
 name: trellis-update
-description: Update an installed repo's Trellis rules to the plugin version - re-copies docs/rules/ and refreshes the AGENTS.md block, leaving anything you added untouched. Use after updating the trellis plugin.
+description: Update an installed repo's Trellis rules to the plugin version - refreshes the rules Trellis owns and the AGENTS.md block, prunes rules it no longer ships, and never touches rules you added. Use after updating the trellis plugin.
 ---
 
 # Update Trellis
 
 Re-sync the Trellis-owned files in the **current repository** to the installed plugin version.
 `$SRC` resolves the same way as in `trellis-install` (`${CLAUDE_SKILL_DIR}/../..`, or
-`export TRELLIS_SRC=<plugin root>`). Run from the repo root.
+`export TRELLIS_SRC=<plugin root>` on Codex / Gemini / Cursor). Run from the repo root.
 
-This refreshes the shipped rules and the host block. It does **not** touch rules you authored
-yourself, and it never deletes a file the plugin does not ship.
+Trellis owns exactly the files listed in `docs/rules/.trellis-owned`. Update refreshes those,
+removes any it no longer ships, and leaves every other file in `docs/rules/` (rules you wrote)
+alone. Do not hand-edit the owned rules - your edits are overwritten here by design.
 
 ## Steps
 
 1. **Resolve the source**:
    ```sh
    SRC="${TRELLIS_SRC:-${CLAUDE_SKILL_DIR:?export TRELLIS_SRC=<plugin root> (see above)}/../..}"
+   [ -f docs/rules/.trellis-owned ] || { echo "no Trellis install found - run /trellis-install first"; exit 1; }
    ```
 
-2. **Re-copy the shipped rules** (overwrite the Trellis-owned ones; leave your own additions
-   alone). Refresh templates the same way if any ship:
+2. **Refresh owned rules, prune orphans, rewrite the owned-list.** Templates are never clobbered:
    ```sh
-   mkdir -p docs/rules
-   cp "$SRC/rules/"*.md docs/rules/
+   set -- "$SRC/rules/"*.md
+   [ -e "$1" ] || { echo "no rules found at $SRC/rules - is TRELLIS_SRC right?"; exit 1; }
+   cp "$@" docs/rules/
+   # remove rules Trellis used to ship but no longer does; your own files are not in the list
+   while IFS= read -r old; do
+     [ -n "$old" ] && [ ! -e "$SRC/rules/$old" ] && rm -f "docs/rules/$old"
+   done < docs/rules/.trellis-owned
+   ( cd "$SRC/rules" && ls *.md ) > docs/rules/.trellis-owned
    if [ -d "$SRC/templates" ] && find "$SRC/templates" -type f ! -name .gitkeep | grep -q .; then
-     mkdir -p docs/templates && cp -R "$SRC/templates/." docs/templates/
+     mkdir -p docs/templates && cp -Rn "$SRC/templates/." docs/templates/
    fi
    ```
 
-3. **Refresh the host block** - in `AGENTS.md` (or `CLAUDE.md`), replace everything between
-   `<!-- trellis:start -->` and `<!-- trellis:end -->` with the current `$SRC/agents.md`. If the
-   markers are missing, append the block.
+3. **Refresh the host block.** Replace the current Trellis block in the host file in place. Pick
+   `AGENTS.md` if it exists, else `CLAUDE.md`. If neither exists, the repo is not installed - run
+   `/trellis-install` instead:
+   ```sh
+   if [ -e AGENTS.md ]; then HOST=AGENTS.md
+   elif [ -e CLAUDE.md ]; then HOST=CLAUDE.md
+   else echo "no host file - run /trellis-install"; exit 1
+   fi
+   if grep -q '<!-- trellis:start -->' "$HOST"; then
+     awk '
+       FNR==NR { blk = blk $0 ORS; next }
+       /<!-- trellis:start -->/ { printf "%s", blk; skip=1; next }
+       skip && /<!-- trellis:end -->/ { skip=0; next }
+       !skip { print }
+     ' "$SRC/agents.md" "$HOST" > "$HOST.tmp" && mv "$HOST.tmp" "$HOST"
+   else
+     printf '\n' >> "$HOST"; cat "$SRC/agents.md" >> "$HOST"
+   fi
+   ```
 
-4. **Confirm**: tell the developer which files were refreshed.
+4. **Confirm**: tell the developer which rules were refreshed and which (if any) were pruned.
