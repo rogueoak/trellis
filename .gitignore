@@ -1,0 +1,9 @@
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# Local build worktrees (Spectra / Trellis build isolation)
+.worktrees/
+*.worktrees/
