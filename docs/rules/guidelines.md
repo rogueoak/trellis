@@ -22,3 +22,6 @@ time, so keep each rule a single, checkable line.
    imperative and short; put the why in the body.
    - Yes: "feat(install): add a dry-run flag"
    - No:  "added a dry run flag"
+4. Tag releases with a Semantic Versioning number and no `v` prefix.
+   - Yes: `0.1.1`
+   - No:  `v0.1.1`
