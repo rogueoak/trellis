@@ -8,7 +8,7 @@
   one shared `SKILL.md` each.
 - **Shipped rules.**
   - `guidelines.md` - ASCII-only writing; tests, lint, and build green before push/merge; PR
-    comments resolved before merge.
+    comments resolved before merge; Conventional Commit messages.
   - `language.md` - the voice for public-facing writing (warm, specific, terse, example-driven,
     no hype, second person).
 - **Templates.** `trellis/templates/` is reserved for shared templates; empty for now.

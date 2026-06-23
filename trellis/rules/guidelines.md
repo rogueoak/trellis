@@ -17,3 +17,8 @@ time, so keep each rule a single, checkable line.
 1. Tests, lint, and build must all pass before you push or merge. No "fix it in a follow-up."
 2. On a pull request, resolve each review comment as you address it, and make sure every
    comment is resolved before the PR merges.
+3. Write commit messages as Conventional Commits: `type(scope): summary`, where `type` is one of
+   `feat`, `fix`, `docs`, `chore`, `refactor`, `test`, `build`, `ci`, `perf`. Keep the summary
+   imperative and short; put the why in the body.
+   - Yes: "feat(install): add a dry-run flag"
+   - No:  "added a dry run flag"
