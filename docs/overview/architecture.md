@@ -12,5 +12,8 @@
   sit alongside Spectra's block in the same file.
 - **Plain Markdown rules.** Rules are version-controlled Markdown, kept terse so the whole set
   reads in a sitting and costs little context when an agent loads it.
+- **Ownership manifest.** Install records the files Trellis ships in `docs/rules/.trellis-owned`.
+  Update refreshes and prunes only those, so a consumer's own rules (and renamed/removed shipped
+  rules) are handled correctly instead of matched by filename alone.
 - **Built under Spectra.** `docs/{specs,plans,feedback,overview}` track this repo's own
   development; the two systems compose - Spectra is the process, Trellis is the conventions.
