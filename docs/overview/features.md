@@ -8,7 +8,7 @@
   one shared `SKILL.md` each.
 - **Shipped rules.**
   - `guidelines.md` - ASCII-only writing; tests, lint, and build green before push/merge; PR
-    comments resolved before merge; Conventional Commit messages.
+    comments resolved before merge; Conventional Commit messages; SemVer release tags (no `v`).
   - `language.md` - the voice for public-facing writing (warm, specific, terse, example-driven,
     no hype, second person).
 - **Commit-msg enforcement.** Install ships a dependency-free POSIX `commit-msg` hook that
