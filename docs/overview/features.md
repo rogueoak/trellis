@@ -11,4 +11,8 @@
     comments resolved before merge; Conventional Commit messages.
   - `language.md` - the voice for public-facing writing (warm, specific, terse, example-driven,
     no hype, second person).
+- **Commit-msg enforcement.** Install ships a dependency-free POSIX `commit-msg` hook that
+  rejects non-Conventional-Commit subjects (allowing merges, reverts, and autosquash). It is
+  copied into the repo's resolved hooks dir, displaces and chains to any existing hook, and warns
+  when `core.hooksPath` would shadow it. `/trellis-update` refreshes it.
 - **Templates.** `trellis/templates/` is reserved for shared templates; empty for now.

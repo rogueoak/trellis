@@ -1,0 +1,38 @@
+#!/bin/sh
+# Trellis commit-msg hook: enforce Conventional Commit subjects.
+# Dependency-free: POSIX sh + grep, no Node/Python/binary required.
+
+msg_file="$1"
+hookdir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+
+# Hand off to a hook Trellis displaced when it took over commit-msg, if any.
+# Reached only on the paths where the Trellis check passes, so a foreign hook
+# still gets the final say.
+chain() {
+  [ -x "$hookdir/commit-msg.local" ] && exec "$hookdir/commit-msg.local" "$@"
+  exit 0
+}
+
+# The subject is the first line that is not a comment and not blank.
+subject=$(grep -v '^#' "$msg_file" | sed '/^[[:space:]]*$/d' | head -n1)
+
+# Let git's own flows through untouched: merges, reverts, autosquash subjects.
+case "$subject" in
+  "Merge "*|"Revert "*|fixup!*|squash!*|amend!*) chain "$@" ;;
+esac
+# Also skip while a merge is in progress (the merge commit being written).
+if git rev-parse -q --verify MERGE_HEAD >/dev/null 2>&1; then chain "$@"; fi
+
+# <type>(<optional scope>)<optional !>: <subject>
+pattern='^(feat|fix|docs|chore|refactor|test|build|ci|perf|style|revert)(\([a-z0-9._-]+\))?(!)?: .+'
+
+if printf '%s' "$subject" | grep -Eq "$pattern"; then
+  chain "$@"
+fi
+
+echo "Trellis: commit message does not follow Conventional Commits." >&2
+echo "  expected: <type>[(scope)][!]: <subject>" >&2
+echo "  types:    feat fix docs chore refactor test build ci perf style revert" >&2
+echo "  example:  feat(install): add a dry-run flag" >&2
+echo "  got:      ${subject:-<empty>}" >&2
+exit 1

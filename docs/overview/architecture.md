@@ -15,5 +15,11 @@
 - **Ownership manifest.** Install records the files Trellis ships in `docs/rules/.trellis-owned`.
   Update refreshes and prunes only those, so a consumer's own rules (and renamed/removed shipped
   rules) are handled correctly instead of matched by filename alone.
+- **Shipped git hooks.** `trellis/hooks/` holds dependency-free hooks (currently `commit-msg`).
+  Install copies them into the *resolved* hooks dir (`git rev-parse --git-path hooks`, which is
+  correct under worktrees and `core.hooksPath`). A foreign hook is displaced to `<hook>.local` and
+  chained to (Trellis runs first, hands off on pass) rather than appended after - appending breaks
+  when the existing hook ends in `exit 0`. Install/update warn when `core.hooksPath` is set, since
+  a manager (husky/lefthook) would otherwise silently shadow the copied hook.
 - **Built under Spectra.** `docs/{specs,plans,feedback,overview}` track this repo's own
   development; the two systems compose - Spectra is the process, Trellis is the conventions.

@@ -1,6 +1,6 @@
 ---
 name: trellis-update
-description: Update an installed repo's Trellis rules to the plugin version - refreshes the rules Trellis owns and the AGENTS.md block, prunes rules it no longer ships, and never touches rules you added. Use after updating the trellis plugin.
+description: Update an installed repo's Trellis rules to the plugin version - refreshes the rules Trellis owns, the commit-msg hook, and the AGENTS.md block, prunes rules it no longer ships, and never touches rules you added. Use after updating the trellis plugin.
 ---
 
 # Update Trellis
@@ -56,4 +56,20 @@ alone. Do not hand-edit the owned rules - your edits are overwritten here by des
    fi
    ```
 
-4. **Confirm**: tell the developer which rules were refreshed and which (if any) were pruned.
+4. **Refresh the commit-msg hook.** Same idempotent displace-and-copy as install: a Trellis hook
+   is overwritten in place (the refresh); a foreign hook is displaced to `commit-msg.local` once
+   and chained to; a `core.hooksPath` redirect is reported:
+   ```sh
+   HOOKS="$(git rev-parse --git-path hooks)"; mkdir -p "$HOOKS"
+   if [ -e "$HOOKS/commit-msg" ] && ! grep -q 'Trellis commit-msg hook' "$HOOKS/commit-msg"; then
+     [ -e "$HOOKS/commit-msg.local" ] || mv "$HOOKS/commit-msg" "$HOOKS/commit-msg.local"
+   fi
+   cp "$SRC/hooks/commit-msg" "$HOOKS/commit-msg"
+   chmod +x "$HOOKS/commit-msg"; [ -e "$HOOKS/commit-msg.local" ] && chmod +x "$HOOKS/commit-msg.local"
+   if hp=$(git config core.hooksPath 2>/dev/null) && [ -n "$hp" ]; then
+     echo "warning: core.hooksPath is '$hp'; the commit-msg hook in $HOOKS may be shadowed - wire it into '$hp' too." >&2
+   fi
+   ```
+
+5. **Confirm**: tell the developer which rules were refreshed, which (if any) were pruned, and
+   that the commit-msg hook was refreshed.
