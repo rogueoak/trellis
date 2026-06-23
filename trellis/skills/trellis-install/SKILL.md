@@ -1,13 +1,13 @@
 ---
 name: trellis-install
-description: Install rogueoak's Trellis AI-agent conventions into the current repo - copies the shared rules into docs/rules/ and wires up AGENTS.md. Use when a repo wants to adopt Trellis.
+description: Install rogueoak's Trellis AI-agent conventions into the current repo - copies the shared rules into docs/rules/, installs the commit-msg hook, and wires up AGENTS.md. Use when a repo wants to adopt Trellis.
 ---
 
 # Install Trellis
 
 Set up the Trellis conventions in the **current repository**. `$SRC` is this plugin's root - the
-directory holding `rules/`, `templates/`, and `agents.md` (the parent of this skill's `skills/`
-dir). Claude Code resolves it automatically (`${CLAUDE_SKILL_DIR}/../..`); on any other agent
+directory holding `rules/`, `templates/`, `hooks/`, and `agents.md` (the parent of this skill's
+`skills/` dir). Claude Code resolves it automatically (`${CLAUDE_SKILL_DIR}/../..`); on any other agent
 (Codex, Gemini, Cursor) `export TRELLIS_SRC=<plugin root>` first. Run from the repo root.
 
 If a previous install exists, prefer running `trellis-update` instead - it re-syncs cleanly.
@@ -65,12 +65,24 @@ If a previous install exists, prefer running `trellis-update` instead - it re-sy
    left untouched (so it would miss the block) - in that case also insert the block into it, or
    tell the developer to consolidate. Codex and Cursor read `AGENTS.md` natively.
 
-4. **Confirm.** Verify the install actually took, then report:
+4. **Install the commit-msg hook** so commits are checked for Conventional Commit format. Run the
+   shipped installer - one script (shared by install and update) that copies Trellis's hooks into
+   the repo's *resolved* hooks dir, displaces any foreign `commit-msg` hook to `commit-msg.local`
+   (Trellis becomes primary and chains to `.local` on pass, never clobbering it), and warns if a
+   hook manager has redirected `core.hooksPath`:
+   ```sh
+   sh "$SRC/hooks/install-hooks.sh" "$SRC"
+   ```
+   Pass on to the developer anything the installer reports (a displaced hook, or a set
+   `core.hooksPath`).
+
+5. **Confirm.** Verify the install actually took, then report:
    ```sh
    ok=1
    while IFS= read -r f; do [ -s "docs/rules/$f" ] || { echo "missing/empty docs/rules/$f"; ok=0; }; done < docs/rules/.trellis-owned
    grep -ql '<!-- trellis:start -->' AGENTS.md CLAUDE.md 2>/dev/null || { echo "no host file carries the Trellis block"; ok=0; }
-   [ "$ok" = 1 ] && echo "Trellis installed - rules in docs/rules/, block wired into the host file."
+   HOOKS="$(git rev-parse --git-path hooks)"; grep -ql 'Trellis commit-msg hook' "$HOOKS/commit-msg" 2>/dev/null || { echo "commit-msg hook not installed"; ok=0; }
+   [ "$ok" = 1 ] && echo "Trellis installed - rules in docs/rules/, commit-msg hook active, block wired into the host file."
    ```
    Tell the developer every change from here follows the rules in `docs/rules/`, and that updates
    come later with `/trellis-update`.

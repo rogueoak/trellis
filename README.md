@@ -85,7 +85,7 @@ Two to start. More will grow on the trellis over time.
 
 | File | What it governs |
 |---|---|
-| `docs/rules/guidelines.md` | How agents write and ship: ASCII-only text; tests, lint, and build green before merge; every PR comment resolved before merge. |
+| `docs/rules/guidelines.md` | How agents write and ship: ASCII-only text; tests, lint, and build green before merge; every PR comment resolved before merge; Conventional Commit messages. |
 | `docs/rules/language.md` | The voice for anything public-facing: warm, specific, terse, example-driven, no hype. |
 
 ## What lands in your repo
@@ -93,14 +93,18 @@ Two to start. More will grow on the trellis over time.
 ```
 docs/
   rules/
-    guidelines.md    how agents write and ship
-    language.md      the voice for public-facing writing
-    .trellis-owned   which rules Trellis manages (so updates stay clean)
-AGENTS.md            a small Trellis block points your agents at the rules
+    guidelines.md         how agents write and ship
+    language.md           the voice for public-facing writing
+    .trellis-owned        which rules Trellis manages (so updates stay clean)
+AGENTS.md                 a small Trellis block points your agents at the rules
+.git/hooks/commit-msg     checks your commit messages (copied in; not tracked)
 ```
 
-Nothing else - no scripts, no hooks, no build step. If Trellis has to create `AGENTS.md` from
-scratch, it also points `CLAUDE.md` and `GEMINI.md` at it so every agent reads the same file.
+The commit-msg hook is a dependency-free POSIX `sh` script - it checks Conventional Commit format
+with nothing to install (no Node, no build step). If a `commit-msg` hook already exists, Trellis
+keeps it as `commit-msg.local` and chains to it rather than replacing it. If Trellis has to create
+`AGENTS.md` from scratch, it also points `CLAUDE.md` and `GEMINI.md` at it so every agent reads the
+same file.
 
 ## Repo layout (this repo)
 

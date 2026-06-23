@@ -13,3 +13,15 @@
   `dependencies` entry. Codex, Gemini CLI, and Cursor have no dependency field (and Cursor's
   marketplace cannot even reference an external repo). Don't design a cross-agent auto-install -
   document companion installs instead, or you back yourself into vendoring. (spec 0002)
+- Chaining onto an existing git hook by appending a call is unsafe: if the existing hook ends in
+  `exit 0`, the appended call never runs. Displace the existing hook to `<hook>.local` and make
+  yours primary, handing off to `.local` on the pass path. (spec 0003)
+- A git hook manager that sets `core.hooksPath` (husky, lefthook) makes git ignore `.git/hooks/`
+  entirely - it is an override, not additive. A tool that installs hooks by copying must target
+  `git rev-parse --git-path hooks` and warn when `core.hooksPath` is set. (spec 0003)
+- A delimiter followed by `.+` in a regex still matches whitespace-only input; when you mean
+  "non-empty content", anchor on a non-space char (e.g. `: .*[^[:space:]]`). (feedback 0005)
+- Git hooks must honor repo config like `core.commentChar` rather than hardcoding `#`, or they
+  misfire on repos that changed it. (feedback 0005)
+- Don't inline the same mutating shell in two skills; ship one script both call, so the safety
+  logic cannot drift between install and update. (feedback 0004)
