@@ -12,6 +12,7 @@
   <a href="#quick-start"><img src="https://img.shields.io/badge/Gemini_CLI-1A73E8?logo=googlegemini&logoColor=white" alt="Gemini CLI"></a>
   <a href="#quick-start"><img src="https://img.shields.io/badge/Cursor-000000?logo=cursor&logoColor=white" alt="Cursor"></a>
   <a href="LICENSE"><img src="https://img.shields.io/github/license/rogueoak/trellis" alt="License: MIT"></a>
+  <a href="https://github.com/rogueoak/trellis/releases/latest"><img src="https://img.shields.io/github/v/release/rogueoak/trellis?label=latest&color=2ea043" alt="Latest release"></a>
 </p>
 
 Every rogueoak repo should feel like it was built by the same hand. Trellis is how. It is a
@@ -21,6 +22,17 @@ how to ship - plus the shared templates that go with them.
 Install it once and your agents read from the same playbook as every other repo. When the
 playbook changes, pull the update in one command. The rules live in version control, in plain
 Markdown, so you can read every one in a sitting.
+
+## What's new
+
+<!-- whats-new -->
+**0.1.1** - A small rules release.
+<!-- /whats-new -->
+
+See every release at
+**[github.com/rogueoak/trellis/releases/latest](https://github.com/rogueoak/trellis/releases/latest)**.
+The line above is rewritten from the first line of your release notes each time a release is
+published - no manual edits here.
 
 ## Quick start
 
