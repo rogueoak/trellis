@@ -25,3 +25,12 @@
   misfire on repos that changed it. (feedback 0005)
 - Don't inline the same mutating shell in two skills; ship one script both call, so the safety
   logic cannot drift between install and update. (feedback 0004)
+- A repo-wide rule (ASCII text) collides with a sibling tool's vendored docs (Spectra's
+  `docs/spectra/` uses em-dashes). Don't hard-code the sibling's name into your checker - the two
+  tools are independent - and don't fix files a `/spectra-update` will revert. Give the checker a
+  developer-owned ignore list and skip the vendored subtree. The one place the sibling's content
+  renders into a shared file (the Spectra block in `AGENTS.md`) was fixed in place and can revert;
+  the durable fix is for Spectra to adopt the same rule. (spec 0004)
+- A POSIX `sh` counter mutated inside a `cmd | while read` loop is lost: the pipe runs the loop in
+  a subshell. To get a verdict out, act in the loop and recompute the count in a second pass (or
+  use a temp file), rather than trusting a variable set inside the pipe. (spec 0004)

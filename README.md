@@ -66,10 +66,12 @@ gemini extensions install https://github.com/rogueoak/trellis
 Add the `rogueoak/trellis` marketplace (in-editor marketplace panel or `/add-plugin`), then run
 `/trellis-install`.
 
-`/trellis-install` copies the rules into `docs/rules/` and points your `AGENTS.md` at them.
-Later, pull updates with `/trellis-update`. On Codex, Gemini, and Cursor, if the agent does not
-resolve the plugin path on its own, the skill asks you to `export TRELLIS_SRC=<plugin root>`
-first.
+`/trellis-install` copies the rules into `docs/rules/`, points your `AGENTS.md` at them, and runs
+a compliance pass that reports any existing violations of the mechanically-checkable rules (today,
+the em/en-dash ban) so the repo starts in compliance, not just carrying the rules. The pass only
+reports - run `/trellis-install --fix` to rewrite them, then review the diff. Later, pull updates
+with `/trellis-update`. On Codex, Gemini, and Cursor, if the agent does not resolve the plugin
+path on its own, the skill asks you to `export TRELLIS_SRC=<plugin root>` first.
 
 ## Pairs with Spectra
 

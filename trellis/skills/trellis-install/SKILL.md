@@ -76,7 +76,21 @@ If a previous install exists, prefer running `trellis-update` instead - it re-sy
    Pass on to the developer anything the installer reports (a displaced hook, or a set
    `core.hooksPath`).
 
-5. **Confirm.** Verify the install actually took, then report:
+5. **Run the compliance pass** so the repo starts in compliance, not just carrying the rules.
+   The shipped scanner checks every tracked text file against the mechanically-checkable rules
+   (today: `guidelines.md`'s em/en-dash ban). It **reports by default and changes nothing**; the
+   developer opts into rewriting with `--fix`. It is non-blocking - a repo with violations still
+   finishes installing. If the developer ran `/trellis-install --fix`, pass `--fix` through:
+   ```sh
+   sh "$SRC/scripts/check-compliance.sh" || true          # report mode (default)
+   # sh "$SRC/scripts/check-compliance.sh" --fix || true   # only when invoked as /trellis-install --fix
+   ```
+   The scanner skips paths listed in `docs/rules/.compliance-ignore` (developer-owned,
+   gitignore-lite), for content another tool vendors - e.g. add `docs/spectra/` when Spectra is
+   installed. Surface whatever the scanner reports, and when it is dirty, point the developer at
+   `--fix`.
+
+6. **Confirm.** Verify the install actually took, then report:
    ```sh
    ok=1
    while IFS= read -r f; do [ -s "docs/rules/$f" ] || { echo "missing/empty docs/rules/$f"; ok=0; }; done < docs/rules/.trellis-owned
@@ -84,5 +98,6 @@ If a previous install exists, prefer running `trellis-update` instead - it re-sy
    HOOKS="$(git rev-parse --git-path hooks)"; grep -ql 'Trellis commit-msg hook' "$HOOKS/commit-msg" 2>/dev/null || { echo "commit-msg hook not installed"; ok=0; }
    [ "$ok" = 1 ] && echo "Trellis installed - rules in docs/rules/, commit-msg hook active, block wired into the host file."
    ```
-   Tell the developer every change from here follows the rules in `docs/rules/`, and that updates
-   come later with `/trellis-update`.
+   Tell the developer every change from here follows the rules in `docs/rules/`, that the
+   compliance pass flagged either a clean repo or a list to clean up (with `--fix`), and that
+   updates come later with `/trellis-update`.
