@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <strong>Shared AI-agent conventions for rogueoak projects - installable into any repo, updatable in one command.</strong>
+  <strong>Project scaffolding - installable into any repo</strong>
 </p>
 
 <p align="center">
@@ -22,17 +22,6 @@ how to ship - plus the shared templates that go with them.
 Install it once and your agents read from the same playbook as every other repo. When the
 playbook changes, pull the update in one command. The rules live in version control, in plain
 Markdown, so you can read every one in a sitting.
-
-## What's new
-
-<!-- whats-new -->
-**0.2.0** - Install and update now bring your repo into compliance, not just carry the rules.
-<!-- /whats-new -->
-
-See every release at
-**[github.com/rogueoak/trellis/releases/latest](https://github.com/rogueoak/trellis/releases/latest)**.
-The line above is rewritten from the first line of your release notes each time a release is
-published - no manual edits here.
 
 ## Quick start
 
@@ -72,6 +61,17 @@ the em/en-dash ban) so the repo starts in compliance, not just carrying the rule
 reports - run `/trellis-install --fix` to rewrite them, then review the diff. Later, pull updates
 with `/trellis-update`. On Codex, Gemini, and Cursor, if the agent does not resolve the plugin
 path on its own, the skill asks you to `export TRELLIS_SRC=<plugin root>` first.
+
+## What's new
+
+<!-- whats-new -->
+Latest release: [0.2.0](https://github.com/rogueoak/trellis/releases/latest)
+
+Install and update now bring your repo into compliance, not just carry the rules.
+<!-- /whats-new -->
+
+See all releases [here](https://github.com/rogueoak/trellis/releases). The block above is
+rewritten from your release notes each time a release is published - no manual edits here.
 
 ## Pairs with Spectra
 

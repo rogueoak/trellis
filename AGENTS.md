@@ -25,3 +25,10 @@ This repo follows **Trellis** - rogueoak's shared rules for AI agents. Read the 
 
 Pull updates with `/trellis-update`.
 <!-- trellis:end -->
+
+## This repo is Trellis
+
+This repo **is** the Trellis source. When you change conventions here, edit Trellis's own rules:
+`docs/rules/` (this repo's installed copy) and the shipped source in `trellis/rules/`. Never edit
+Spectra's `docs/spectra/protocol.md` - it is a vendored copy of the Spectra plugin, so any change
+made here is overwritten by `/spectra-update`. Propose Spectra changes in the Spectra repo.
