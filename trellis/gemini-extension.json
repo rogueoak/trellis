@@ -1,5 +1,5 @@
 {
   "name": "trellis",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Shared AI-agent conventions and templates for rogueoak projects. Adds /trellis-install and /trellis-update."
 }
