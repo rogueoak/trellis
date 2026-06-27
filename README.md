@@ -65,9 +65,9 @@ path on its own, the skill asks you to `export TRELLIS_SRC=<plugin root>` first.
 ## What's new
 
 <!-- whats-new -->
-Latest release: [0.2.0](https://github.com/rogueoak/trellis/releases/latest)
+Latest release: [0.3.0](https://github.com/rogueoak/trellis/releases/latest)
 
-Install and update now bring your repo into compliance, not just carry the rules.
+Every repo now ships a LICENSE, README, and CONTRIBUTING, with a standard README layout.
 <!-- /whats-new -->
 
 See all releases [here](https://github.com/rogueoak/trellis/releases). The block above is
