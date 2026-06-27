@@ -1,0 +1,7 @@
+# Paths the Trellis compliance pass skips (check-compliance.sh). Developer-owned.
+# gitignore-lite: blank and '#' lines ignored; a trailing-slash pattern skips a
+# directory subtree; anything else is a glob matched against the path.
+#
+# Spectra is a separate tool; its vendored docs are policed in Spectra's own repo,
+# not rewritten here (a /spectra-update would revert any change).
+docs/spectra/

@@ -15,4 +15,11 @@
   rejects non-Conventional-Commit subjects (allowing merges, reverts, and autosquash). It is
   copied into the repo's resolved hooks dir, displaces and chains to any existing hook, and warns
   when `core.hooksPath` would shadow it. `/trellis-update` refreshes it.
+- **Compliance pass on install/update.** A shipped, dependency-free `trellis/scripts/check-compliance.sh`
+  scans every tracked text file against the mechanically-checkable rules (today: `guidelines.md`'s
+  em/en-dash ban) and reports each violation as `file:line`. It changes nothing by default;
+  `--fix` rewrites em/en dashes to ASCII (best effort, reviewable diff). `/trellis-install` and
+  `/trellis-update` run it non-blocking, passing `--fix` through when invoked as
+  `/trellis-install --fix`. A developer-owned `docs/rules/.compliance-ignore` (gitignore-lite)
+  skips content another tool vendors, e.g. `docs/spectra/`.
 - **Templates.** `trellis/templates/` is reserved for shared templates; empty for now.

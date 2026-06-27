@@ -62,5 +62,16 @@ alone. Do not hand-edit the owned rules - your edits are overwritten here by des
    sh "$SRC/hooks/install-hooks.sh" "$SRC"
    ```
 
-5. **Confirm**: tell the developer which rules were refreshed, which (if any) were pruned, and
-   that the commit-msg hook was refreshed.
+5. **Run the compliance pass** so newly-shipped checks reach existing content. The scanner checks
+   every tracked text file against the mechanically-checkable rules (today: `guidelines.md`'s
+   em/en-dash ban), reports by default, and changes nothing unless run with `--fix`. It is
+   non-blocking. If the developer ran `/trellis-update --fix`, pass `--fix` through:
+   ```sh
+   sh "$SRC/scripts/check-compliance.sh" || true          # report mode (default)
+   # sh "$SRC/scripts/check-compliance.sh" --fix || true   # only when invoked as /trellis-update --fix
+   ```
+   It honors `docs/rules/.compliance-ignore` (developer-owned) for content another tool vendors.
+
+6. **Confirm**: tell the developer which rules were refreshed, which (if any) were pruned, that
+   the commit-msg hook was refreshed, and whether the compliance pass came back clean or listed
+   violations to clean up with `--fix`.
