@@ -1,7 +1,7 @@
 {
   "name": "trellis",
   "description": "Shared AI-agent conventions and templates for rogueoak projects. Adds /trellis-install and /trellis-update.",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "author": {
     "name": "Matthew Maynes"
   },
