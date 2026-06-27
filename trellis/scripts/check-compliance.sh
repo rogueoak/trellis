@@ -2,6 +2,7 @@
 # Trellis compliance pass: find (and optionally fix) violations of the
 # mechanically-checkable rules in docs/rules across the repo's tracked text.
 # Dependency-free: POSIX sh + git + grep + sed, no Node/Python/binary required.
+# Verified under dash, so it is safe as a CI / pre-commit gate.
 #
 # Today the one checkable rule is guidelines.md's em/en-dash ban: an em-dash
 # (U+2014) or en-dash (U+2013) in tracked text is a violation. As more rules
@@ -44,49 +45,82 @@ ignored() {
   return 1
 }
 
-# A tracked file is in scope when it is not skipped, is text (grep -I treats it as
-# such), and contains a dash. git ls-files honors .gitignore and skips untracked.
+# A tracked file is in scope when it is a regular file (not a symlink - we never
+# read or rewrite through one), is not skipped, is text (grep -I treats it so),
+# and contains a dash. "-- $f" keeps a hostile filename (e.g. one starting with
+# '-') from being parsed as an option by grep.
 in_scope() {
-  ! ignored "$1" \
-    && grep -Iq . "$1" 2>/dev/null \
-    && grep -q -e "$em" -e "$en" "$1" 2>/dev/null
+  [ ! -L "$1" ] || return 1
+  ! ignored "$1" || return 1
+  grep -Iq . -- "$1" 2>/dev/null || return 1
+  grep -q -e "$em" -e "$en" -- "$1" 2>/dev/null
 }
 
-# Pass 1: act. Report each hit as file:line, or rewrite in place under --fix.
-git ls-files -z | while IFS= read -r -d '' f; do
-  [ -f "$f" ] && in_scope "$f" || continue
-  if [ "$fix" -eq 1 ]; then
-    # em-dash -> spaced hyphen, en-dash -> hyphen, then squeeze the doubled
-    # spaces the em swap can introduce ("a  -  b" -> "a - b"). Best effort:
-    # review the diff, since em-vs-comma and spacing are judgment calls.
-    tmp="$f.trellis.tmp"
-    sed -e "s/$em/ - /g" -e "s/$en/-/g" -e 's/  *-  */ - /g' "$f" > "$tmp"
-    if cmp -s "$f" "$tmp"; then rm -f "$tmp"; else mv "$tmp" "$f"; echo "fixed: $f"; fi
-  else
-    grep -nF -e "$em" -e "$en" "$f" | while IFS= read -r line; do echo "$f:$line"; done
+# Enumerate tracked files newline-delimited (POSIX read has no -z/-d, so the
+# NUL form is not portable to dash). git ls-files honors .gitignore and, with
+# core.quotePath on by default, C-quotes any path with newlines or control
+# bytes; such a quoted name fails the [ -f ] test below and is skipped rather
+# than mis-handled. Plain spaces are not quoted and read fine.
+offenders=$(mktemp)
+trap 'rm -f "$offenders"' EXIT
+git ls-files | while IFS= read -r f; do
+  if [ -f "$f" ] && in_scope "$f"; then printf '%s\n' "$f"; fi
+done > "$offenders"
+count=$(wc -l < "$offenders" | tr -d ' ')
+
+# Report mode (default): print every hit as file:line, change nothing.
+if [ "$fix" -eq 0 ]; then
+  if [ "$count" -eq 0 ]; then
+    echo "compliance: clean - no em/en dashes in tracked text."
+    exit 0
   fi
-done
-
-# Pass 2: verdict. The pipe above runs in a subshell, so counters there do not
-# survive; recompute the offender count over the (now possibly fixed) tree.
-hits=$(git ls-files -z | { n=0; while IFS= read -r -d '' f; do
-  [ -f "$f" ] && in_scope "$f" && n=$((n + 1)) || continue
-done; printf '%s' "$n"; })
-
-if [ "$fix" -eq 1 ]; then
-  if [ "$hits" -gt 0 ]; then
-    echo "compliance: $hits file(s) still contain em/en dashes after --fix; fix by hand." >&2
-    exit 1
-  fi
-  echo "compliance: em/en dashes rewritten to ASCII (best effort - review the diff)."
-  exit 0
-fi
-
-if [ "$hits" -gt 0 ]; then
+  while IFS= read -r f; do
+    grep -nF -e "$em" -e "$en" -- "$f" | while IFS= read -r line; do
+      printf '%s:%s\n' "$f" "$line"
+    done
+  done < "$offenders"
   echo "" >&2
-  echo "compliance: $hits file(s) violate the em/en-dash ban (guidelines.md)." >&2
+  echo "compliance: $count file(s) violate the em/en-dash ban (guidelines.md)." >&2
   echo "  run the pass with --fix to rewrite them to ASCII, then review the diff." >&2
   exit 1
 fi
-echo "compliance: clean - no em/en dashes in tracked text."
+
+# Fix mode: rewrite em/en dashes to ASCII. em-dash -> spaced hyphen (consuming
+# any spaces already around it, so "a - b" stays single-spaced); en-dash ->
+# hyphen. The substitutions only touch the dash and its immediate spaces, so
+# unrelated aligned text on other lines is left alone. Best effort: review the
+# diff, since em-vs-comma is a judgment call.
+if [ "$count" -eq 0 ]; then
+  echo "compliance: clean - no em/en dashes to fix."
+  exit 0
+fi
+changed=0
+while IFS= read -r f; do
+  case "$f" in */*) dir=${f%/*} ;; *) dir=. ;; esac
+  # mktemp gives an unpredictable, freshly-created regular file (never a planted
+  # symlink); the leading './' neutralizes a dir name that starts with '-'.
+  tmp=$(mktemp "./$dir/.trellis-compliance.XXXXXX")
+  if sed -e "s/ *$em */ - /g" -e "s/$en/-/g" < "$f" > "$tmp"; then
+    if cmp -s -- "$f" "$tmp"; then
+      rm -f -- "$tmp"
+    else
+      mv -- "$tmp" "$f"
+      printf 'fixed: %s\n' "$f"
+      changed=$((changed + 1))
+    fi
+  else
+    rm -f -- "$tmp"
+    echo "compliance: failed to rewrite $f; left as-is." >&2
+  fi
+done < "$offenders"
+
+# Confirm none remain (a dash the heuristic missed, or a write that failed).
+remaining=$(git ls-files | { n=0; while IFS= read -r f; do
+  [ -f "$f" ] && in_scope "$f" && n=$((n + 1)) || continue
+done; printf '%s' "$n"; })
+if [ "$remaining" -gt 0 ]; then
+  echo "compliance: $remaining file(s) still contain em/en dashes after --fix; fix by hand." >&2
+  exit 1
+fi
+echo "compliance: rewrote $changed file(s) to ASCII (best effort - review the diff)."
 exit 0

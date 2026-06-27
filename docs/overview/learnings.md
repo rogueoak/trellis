@@ -33,4 +33,15 @@
   the durable fix is for Spectra to adopt the same rule. (spec 0004)
 - A POSIX `sh` counter mutated inside a `cmd | while read` loop is lost: the pipe runs the loop in
   a subshell. To get a verdict out, act in the loop and recompute the count in a second pass (or
-  use a temp file), rather than trusting a variable set inside the pipe. (spec 0004)
+  collect into a temp file and loop over it with `< file`, which keeps the counter), rather than
+  trusting a variable set inside the pipe. (spec 0004)
+- `read -d ''` (NUL-delimited, paired with `git ls-files -z`) is a bash/ksh extension, NOT POSIX;
+  under `dash` it errors and the loop silently does nothing - a script that "passes" while
+  checking zero files. A `#!/bin/sh` script must be tested under `dash`, and should iterate
+  `git ls-files | while IFS= read -r f` (default `core.quotePath` C-quotes exotic names so they
+  are skipped, not mishandled). (spec 0004)
+- A shell tool that rewrites files over untrusted repo content must not write through a predictable
+  temp path (`$f.tmp`) or follow symlinks: a planted `$f.tmp -> ~/.ssh/...` symlink turns an
+  in-place fix into arbitrary file overwrite. Skip symlinks (`[ -L ]`), create the temp with
+  `mktemp`, and guard hostile filenames with `--`/`./` so a name like `-rf` is not read as an
+  option. (spec 0004)

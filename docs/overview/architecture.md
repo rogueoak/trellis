@@ -29,12 +29,16 @@
   install still appends-after-`exit 0`; the two are safe together only because they manage
   different hook types.
 - **Compliance scanner.** `trellis/scripts/check-compliance.sh` is a single POSIX `sh` script both
-  skills call (same one-script-no-drift discipline as `install-hooks.sh`), reusable later by a
-  pre-commit hook or CI. It enumerates tracked text via `git ls-files -z`, skips binary files
-  (`grep -I`) and paths in the developer-owned `docs/rules/.compliance-ignore`, then reports em/en
-  dashes by default or rewrites them under `--fix`. The report/`--fix` split keeps install's
+  skills call (same one-script-no-drift discipline as `install-hooks.sh`), with `check-compliance.test.sh`
+  covering the contract under `dash`. It enumerates tracked text via `git ls-files` (newline, not
+  `-z`: POSIX `read` has no `-d`, so the NUL form is not dash-portable), skips symlinks and binary
+  files (`grep -I`) and paths in the developer-owned `docs/rules/.compliance-ignore`, then reports
+  em/en dashes by default or rewrites them under `--fix` (writing via `mktemp` + `mv` so a planted
+  symlink or crashed write cannot clobber or leak a file). The report/`--fix` split keeps install's
   never-clobber stance: detection never mutates, remediation is opt-in and reviewable. The ignore
   file (not a hard-coded path) keeps Trellis decoupled from Spectra while still letting a repo skip
-  another tool's vendored docs.
+  another tool's vendored docs. Reuse by a consumer's own pre-commit/CI is deferred and will need a
+  copy-into-repo step like `install-hooks.sh` has - today the script only ships in the plugin, so
+  only this repo (where `trellis/` is committed) can invoke it directly.
 - **Built under Spectra.** `docs/{specs,plans,feedback,overview}` track this repo's own
   development; the two systems compose - Spectra is the process, Trellis is the conventions.

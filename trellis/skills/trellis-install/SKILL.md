@@ -6,8 +6,8 @@ description: Install rogueoak's Trellis AI-agent conventions into the current re
 # Install Trellis
 
 Set up the Trellis conventions in the **current repository**. `$SRC` is this plugin's root - the
-directory holding `rules/`, `templates/`, `hooks/`, and `agents.md` (the parent of this skill's
-`skills/` dir). Claude Code resolves it automatically (`${CLAUDE_SKILL_DIR}/../..`); on any other agent
+directory holding `rules/`, `templates/`, `hooks/`, `scripts/`, and `agents.md` (the parent of
+this skill's `skills/` dir). Claude Code resolves it automatically (`${CLAUDE_SKILL_DIR}/../..`); on any other agent
 (Codex, Gemini, Cursor) `export TRELLIS_SRC=<plugin root>` first. Run from the repo root.
 
 If a previous install exists, prefer running `trellis-update` instead - it re-syncs cleanly.
