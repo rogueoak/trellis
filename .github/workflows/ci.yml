@@ -1,0 +1,39 @@
+name: CI
+
+# Runs the dependency-free test suites and the version-sync + compliance guards on every push to
+# main and every PR. The Release workflow gates on this workflow succeeding on main (workflow_run),
+# so its name must stay "CI".
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Cancel superseded runs on a PR branch, but never cancel a push run on main - the Release
+# workflow waits on it, and a cancelled main run would drop that release.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: tests + guards
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Compliance checker tests
+        run: sh trellis/scripts/check-compliance.test.sh
+      - name: Version bump tests
+        run: sh trellis/scripts/bump-version.test.sh
+      - name: Version in sync across manifests
+        run: sh scripts/bump-version.sh --check
+      - name: Dogfood - installed template matches its source
+        run: |
+          base=trellis/templates/plugin-release/owned
+          for f in $(cd "$base" && find . -type f | sed 's#^\./##'); do
+            diff "$base/$f" "$f" || { echo "drift: installed $f differs from $base/$f"; exit 1; }
+          done
+      - name: Compliance pass (report)
+        run: sh trellis/scripts/check-compliance.sh

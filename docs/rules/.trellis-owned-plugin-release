@@ -1,0 +1,3 @@
+docs/releases/README.md
+scripts/bump-version.sh
+.github/workflows/release.yml

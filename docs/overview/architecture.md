@@ -40,5 +40,22 @@
   another tool's vendored docs. Reuse by a consumer's own pre-commit/CI is deferred and will need a
   copy-into-repo step like `install-hooks.sh` has - today the script only ships in the plugin, so
   only this repo (where `trellis/` is committed) can invoke it directly.
+- **Optional templates.** `trellis/templates/<name>/` bundles are opt-in, unlike `rules/`. Each
+  splits into `owned/` (the mechanism Trellis maintains) and `seed/` (the consumer's inputs),
+  both mirroring their target paths. Install (`--template <name>`) merges `owned/` (clobber) and
+  `seed/` (`cp -Rn`) into the repo, records the name in `docs/rules/.trellis-templates`, and lists
+  the owned files in `docs/rules/.trellis-owned-<name>`. Update needs no flag: it walks that
+  registry and re-syncs each template's owned files exactly as it re-syncs rules (refresh + prune),
+  never touching `seed/` targets. The boundary is one-way - no consumer-editable content lives in
+  an owned file - so a clobbering refresh is always safe. Reuses the `.trellis-owned`
+  ownership-manifest idea rather than inventing a parallel one.
+- **plugin-release pipeline.** The first template. Repo-specific variation (the manifest list)
+  lives in a consumer-owned `.version-manifests`, so the owned `bump-version.sh` ships identical
+  everywhere and updates centrally. `release.yml` is standalone and triggered by `workflow_run` on
+  the consumer's `CI` workflow (not `needs:` on job names), so it is portable; it is the only job
+  with `contents: write` (job-scoped), gated to CI-success on `main`, SHA-pinned checkout,
+  idempotent via `gh release view`. Trellis self-adopts: a `CI` workflow runs the test suites +
+  `bump-version.sh --check` + a dogfood diff (installed copies must equal the template source), and
+  `release.yml` gates on it.
 - **Built under Spectra.** `docs/{specs,plans,feedback,overview}` track this repo's own
   development; the two systems compose - Spectra is the process, Trellis is the conventions.
