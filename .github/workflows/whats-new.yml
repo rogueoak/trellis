@@ -43,7 +43,12 @@ jobs:
           if not headline:
               headline = name or "New release available."
 
-          block = f"<!-- whats-new -->\n**{tag}** - {headline}\n<!-- /whats-new -->"
+          block = (
+              "<!-- whats-new -->\n"
+              f"Latest release: [{tag}](https://github.com/rogueoak/trellis/releases/latest)\n\n"
+              f"{headline}\n"
+              "<!-- /whats-new -->"
+          )
 
           with open("README.md", encoding="utf-8") as f:
               readme = f.read()
