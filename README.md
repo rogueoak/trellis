@@ -26,7 +26,7 @@ Markdown, so you can read every one in a sitting.
 ## What's new
 
 <!-- whats-new -->
-**0.1.2** - Relax the writing rule: ban only em/en dashes, allow meaningful Unicode (arrows, math symbols, ellipsis, section refs, emoji).
+**0.2.0** - Install and update now bring your repo into compliance, not just carry the rules.
 <!-- /whats-new -->
 
 See every release at
