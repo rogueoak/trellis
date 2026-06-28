@@ -1,0 +1,8 @@
+# Manifests that must match the root VERSION. One path per line; '#' and blanks ignored.
+.claude-plugin/marketplace.json
+.cursor-plugin/marketplace.json
+.agents/plugins/marketplace.json
+trellis/.claude-plugin/plugin.json
+trellis/.codex-plugin/plugin.json
+trellis/.cursor-plugin/plugin.json
+trellis/gemini-extension.json

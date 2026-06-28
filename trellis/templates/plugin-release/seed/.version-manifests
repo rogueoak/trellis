@@ -1,0 +1,12 @@
+# The manifests that must carry the same version as the root VERSION file.
+# One path per line, relative to the repo root. Blank lines and '#' comments are ignored.
+# This file is yours to edit; Trellis seeds it once and never overwrites it.
+#
+# List every manifest that hardcodes your plugin's version - typically the per-host plugin
+# manifests and any marketplace files. Each must contain exactly one "version" token. Examples
+# (delete the ones you do not have, add any you do):
+#
+# .claude-plugin/marketplace.json
+# .cursor-plugin/marketplace.json
+# .codex-plugin/plugin.json
+# gemini-extension.json

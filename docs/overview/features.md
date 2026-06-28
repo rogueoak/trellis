@@ -24,4 +24,15 @@
   `/trellis-update` run it non-blocking, passing `--fix` through when invoked as
   `/trellis-install --fix`. A developer-owned `docs/rules/.compliance-ignore` (gitignore-lite)
   skips content another tool vendors, e.g. `docs/spectra/`.
-- **Templates.** `trellis/templates/` is reserved for shared templates; empty for now.
+- **Optional templates.** Beyond the universal rules, Trellis ships **opt-in** templates under
+  `trellis/templates/<name>/` that only some repos want. A repo adds one with
+  `/trellis-install --template <name>`; plain `/trellis-update` then keeps it current (registry at
+  `docs/rules/.trellis-templates`), no flag needed. Each template splits into `owned/` (Trellis
+  refreshes these on update) and `seed/` (copied once, then the consumer's), so an update never
+  clobbers consumer content. See `trellis/templates/README.md`.
+- **plugin-release template.** For repos that are themselves published marketplace plugins: a root
+  `VERSION` as single source of truth, `scripts/bump-version.sh` to rewrite it and every manifest
+  in `.version-manifests` in lockstep (`--check` fails CI on drift, semver-only, format-preserving),
+  a standalone `.github/workflows/release.yml` that tags + publishes a GitHub Release once CI
+  succeeds on `main` (via `workflow_run`, composing with "What's new"), and the
+  `docs/releases/<x.y.z>.md` notes convention. Trellis dogfoods it for its own seven manifests.

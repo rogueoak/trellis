@@ -21,19 +21,16 @@ If a previous install exists, prefer running `trellis-update` instead - it re-sy
    ```
 
 2. **Copy the rules and record what Trellis owns.** The owned-list (`docs/rules/.trellis-owned`)
-   lets `trellis-update` refresh and prune only Trellis's files, never your own. Templates are
-   seeded once and never clobbered:
+   lets `trellis-update` refresh and prune only Trellis's files, never your own:
    ```sh
    set -- "$SRC/rules/"*.md
    [ -e "$1" ] || { echo "no rules found at $SRC/rules - is TRELLIS_SRC right?"; exit 1; }
    cp "$@" docs/rules/
    ( cd "$SRC/rules" && ls *.md ) > docs/rules/.trellis-owned
-   if [ -d "$SRC/templates" ] && find "$SRC/templates" -type f ! -name .gitkeep | grep -q .; then
-     mkdir -p docs/templates && cp -Rn "$SRC/templates/." docs/templates/
-   fi
    ```
    If a file you wrote yourself shares a name with a shipped rule, it will be overwritten - tell
-   the developer rather than silently clobbering it.
+   the developer rather than silently clobbering it. (Optional **templates** are opt-in and
+   handled in step 6, not seeded here.)
 
 3. **Wire up the host file.** Pick the primary host file: `AGENTS.md` if it exists, else
    `CLAUDE.md` if it exists, else create `AGENTS.md`. Insert or replace the Trellis block (the
@@ -90,7 +87,29 @@ If a previous install exists, prefer running `trellis-update` instead - it re-sy
    installed. Surface whatever the scanner reports, and when it is dirty, point the developer at
    `--fix`.
 
-6. **Confirm.** Verify the install actually took, then report:
+6. **Optional templates (only when asked).** A template is an opt-in bundle under
+   `$SRC/templates/<name>/` (see `$SRC/templates/README.md`). **Skip this step entirely unless the
+   developer ran `/trellis-install --template <name>`.** A template splits into `owned/` (Trellis
+   refreshes these on every update - never hand-edit them) and `seed/` (copied once, then yours);
+   both mirror their target paths, so install just merges them into the repo root - `owned`
+   clobbering, `seed` only if absent. Record the install so `trellis-update` maintains it without
+   the flag:
+   ```sh
+   name=<the requested template name>            # e.g. plugin-release
+   tdir="$SRC/templates/$name"
+   [ -d "$tdir/owned" ] || { echo "no such template: $name (looked in $tdir)"; exit 1; }
+   cp -Rp "$tdir/owned/." .                       # owned -> functional paths (refresh/clobber)
+   [ -d "$tdir/seed" ] && cp -Rn "$tdir/seed/." . # seed -> once, never clobber existing
+   touch docs/rules/.trellis-templates
+   grep -qxF "$name" docs/rules/.trellis-templates || echo "$name" >> docs/rules/.trellis-templates
+   ( cd "$tdir/owned" && find . -type f | sed 's#^\./##' ) > "docs/rules/.trellis-owned-$name"
+   ```
+   Then read the template's `README.md` and walk the developer through its setup (for
+   `plugin-release`: set `VERSION`, fill `.version-manifests`, match the CI workflow name in
+   `release.yml`). Stress that **owned files are overwritten on every update** - all customization
+   goes in the seed files.
+
+7. **Confirm.** Verify the install actually took, then report:
    ```sh
    ok=1
    while IFS= read -r f; do [ -s "docs/rules/$f" ] || { echo "missing/empty docs/rules/$f"; ok=0; }; done < docs/rules/.trellis-owned
@@ -99,5 +118,5 @@ If a previous install exists, prefer running `trellis-update` instead - it re-sy
    [ "$ok" = 1 ] && echo "Trellis installed - rules in docs/rules/, commit-msg hook active, block wired into the host file."
    ```
    Tell the developer every change from here follows the rules in `docs/rules/`, that the
-   compliance pass flagged either a clean repo or a list to clean up (with `--fix`), and that
-   updates come later with `/trellis-update`.
+   compliance pass flagged either a clean repo or a list to clean up (with `--fix`), any template
+   they added and its setup, and that updates come later with `/trellis-update`.

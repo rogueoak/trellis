@@ -45,3 +45,15 @@
   in-place fix into arbitrary file overwrite. Skip symlinks (`[ -L ]`), create the temp with
   `mktemp`, and guard hostile filenames with `--`/`./` so a name like `-rf` is not read as an
   option. (spec 0004)
+- To share tooling that has per-repo variation, ship the mechanism verbatim and push the variation
+  into a consumer-owned config file (plugin-release's `bump-version.sh` is identical everywhere;
+  each repo's manifest list lives in its own `.version-manifests`). The mechanism then updates
+  centrally and never needs hand-editing per repo - the same reason rules are copied, not forked.
+  (spec 0005)
+- An optional, updatable component needs a registry of what is installed plus a strict owned-vs-seed
+  ownership split: update reads the registry and refreshes only owned files (so a clobber is always
+  safe), while consumer inputs live in seed files it never touches. Without the registry, update
+  cannot maintain a component the user opted into without being told again. (spec 0005)
+- A portable CI-triggered release must not depend on another workflow's job names: gate it with
+  `workflow_run` on the upstream workflow's *name* (success + `main`), not `needs: [job]`, so the
+  same file drops into any repo. (spec 0005)

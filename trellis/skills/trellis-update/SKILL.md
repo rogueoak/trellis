@@ -21,7 +21,8 @@ alone. Do not hand-edit the owned rules - your edits are overwritten here by des
    [ -f docs/rules/.trellis-owned ] || { echo "no Trellis install found - run /trellis-install first"; exit 1; }
    ```
 
-2. **Refresh owned rules, prune orphans, rewrite the owned-list.** Templates are never clobbered:
+2. **Refresh owned rules and templates, prune orphans, rewrite the owned-lists.** Your own files,
+   and any template `seed/` files, are never touched:
    ```sh
    set -- "$SRC/rules/"*.md
    [ -e "$1" ] || { echo "no rules found at $SRC/rules - is TRELLIS_SRC right?"; exit 1; }
@@ -31,8 +32,24 @@ alone. Do not hand-edit the owned rules - your edits are overwritten here by des
      [ -n "$old" ] && [ ! -e "$SRC/rules/$old" ] && rm -f "docs/rules/$old"
    done < docs/rules/.trellis-owned
    ( cd "$SRC/rules" && ls *.md ) > docs/rules/.trellis-owned
-   if [ -d "$SRC/templates" ] && find "$SRC/templates" -type f ! -name .gitkeep | grep -q .; then
-     mkdir -p docs/templates && cp -Rn "$SRC/templates/." docs/templates/
+
+   # Refresh every installed template (recorded by --template at install). Owned files are
+   # re-copied to the current plugin version; seed files and your content are left alone. No
+   # --template flag needed - the registry says what to maintain.
+   if [ -f docs/rules/.trellis-templates ]; then
+     while IFS= read -r name; do
+       [ -n "$name" ] || continue
+       tdir="$SRC/templates/$name"
+       [ -d "$tdir/owned" ] || { echo "template '$name' no longer shipped - leaving its files in place"; continue; }
+       cp -Rp "$tdir/owned/." .
+       # prune owned files this template used to ship but no longer does
+       if [ -f "docs/rules/.trellis-owned-$name" ]; then
+         while IFS= read -r old; do
+           [ -n "$old" ] && [ ! -e "$tdir/owned/$old" ] && rm -f "$old"
+         done < "docs/rules/.trellis-owned-$name"
+       fi
+       ( cd "$tdir/owned" && find . -type f | sed 's#^\./##' ) > "docs/rules/.trellis-owned-$name"
+     done < docs/rules/.trellis-templates
    fi
    ```
 
