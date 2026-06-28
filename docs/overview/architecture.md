@@ -54,8 +54,12 @@
   everywhere and updates centrally. `release.yml` is standalone and triggered by `workflow_run` on
   the consumer's `CI` workflow (not `needs:` on job names), so it is portable; it is the only job
   with `contents: write` (job-scoped), gated to CI-success on `main`, SHA-pinned checkout,
-  idempotent via `gh release view`. Trellis self-adopts: a `CI` workflow runs the test suites +
-  `bump-version.sh --check` + a dogfood diff (installed copies must equal the template source), and
-  `release.yml` gates on it.
+  idempotent via `gh release view`. The owned `whats-new.yml` closes the loop: it triggers on
+  `workflow_run` of `Release` (not `release: published`, which a `GITHUB_TOKEN`-created release
+  never fires), reads that version's notes, and lands the README headline through an auto-merged
+  PR (a protected `main` forbids the direct push the old version used). So a single `VERSION` bump
+  merged to `main` fans out to tag -> Release -> README "What's new", entirely owned and updatable.
+  Trellis self-adopts: a `CI` workflow runs the test suites + `bump-version.sh --check` + a dogfood
+  diff (installed copies must equal the template source), and `release.yml` gates on it.
 - **Built under Spectra.** `docs/{specs,plans,feedback,overview}` track this repo's own
   development; the two systems compose - Spectra is the process, Trellis is the conventions.

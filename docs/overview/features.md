@@ -34,5 +34,7 @@
   `VERSION` as single source of truth, `scripts/bump-version.sh` to rewrite it and every manifest
   in `.version-manifests` in lockstep (`--check` fails CI on drift, semver-only, format-preserving),
   a standalone `.github/workflows/release.yml` that tags + publishes a GitHub Release once CI
-  succeeds on `main` (via `workflow_run`, composing with "What's new"), and the
-  `docs/releases/<x.y.z>.md` notes convention. Trellis dogfoods it for its own seven manifests.
+  succeeds on `main` (via `workflow_run`), a `whats-new.yml` that then refreshes the README "What's
+  new" headline through an auto-merged PR (triggered by `workflow_run` of `Release`, so it survives
+  the `GITHUB_TOKEN`-recursion rule), and the `docs/releases/<x.y.z>.md` notes convention. Trellis
+  dogfoods it for its own seven manifests.

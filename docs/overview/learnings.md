@@ -57,3 +57,13 @@
 - A portable CI-triggered release must not depend on another workflow's job names: gate it with
   `workflow_run` on the upstream workflow's *name* (success + `main`), not `needs: [job]`, so the
   same file drops into any repo. (spec 0005)
+- A `GITHUB_TOKEN`-created event (a release, push, or tag made by a workflow) does NOT trigger
+  further workflows - GitHub suppresses that to prevent recursion. To run work *after* an automated
+  step, key on `workflow_run` of the workflow that performed it, not on the domain event it emits
+  (`release: published` never fires for a token-made release). (feedback 0006)
+- A workflow that writes to a ruleset-protected branch must go through a PR it opens and
+  self-merges, never a direct `git push` (which the ruleset rejects) - the same constraint a human
+  contributor has. (feedback 0006)
+- Dogfood the whole pipeline end-to-end, not just the unit you changed: the 0005 release worked in
+  isolation but the README-headline composition was broken, and only running a real release
+  surfaced it. A green unit test would not have. (feedback 0006)
