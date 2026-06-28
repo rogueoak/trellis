@@ -1,0 +1,14 @@
+@import "tailwindcss";
+/* roots is the design foundation (tokens, theme); canopy's components build on it, so it imports
+   first. */
+@import "@rogueoak/roots/styles.css";
+@import "@rogueoak/canopy/styles.css";
+
+/* Design tokens for this app. Extend rather than fork the roots/canopy defaults. */
+@theme {
+  --font-sans: var(--font-system, ui-sans-serif, system-ui, sans-serif);
+}
+
+body {
+  @apply antialiased;
+}

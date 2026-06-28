@@ -4,13 +4,13 @@ Single-source plugin versioning + an automated tag and GitHub Release on merge. 
 are themselves published marketplace plugins (one version string duplicated across several host
 manifests).
 
-Install with:
+Apply with (run `/trellis-install` first):
 
 ```
-/trellis-install --template plugin-release
+/trellis-template plugin-release
 ```
 
-After that, plain `/trellis-update` keeps the owned files current - you never re-pass the flag.
+After that, plain `/trellis-update` keeps the owned files current - you never re-run the command.
 
 ## What it installs
 

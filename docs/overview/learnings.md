@@ -67,3 +67,14 @@
 - Dogfood the whole pipeline end-to-end, not just the unit you changed: the 0005 release worked in
   isolation but the README-headline composition was broken, and only running a real release
   surfaced it. A green unit test would not have. (feedback 0006)
+- When a skill needs more than a couple of lines of shell, ship it as a script the skill calls
+  (like `install-hooks.sh` / `check-compliance.sh` / `bump-version.sh`), not prose embedded in
+  `SKILL.md`. Only a script can be unit-tested and kept from drifting; a sibling skill that needs
+  the same logic then calls the same script instead of copying it. Embedded skill shell is for glue,
+  not logic. (feedback 0007)
+- Do not rely on `cp -n` (or its exit status) for "copy only if absent": BSD `cp` (macOS) returns
+  non-zero when it skips, GNU `cp` returns zero, so a Linux-only CI never sees the failure while
+  consumers on macOS do. Copy per file with an explicit `[ -e ]` check (keep+report or `mkdir -p`
+  + `cp -p`), which is portable and yields an accurate skipped/written list. This refines the
+  earlier "`cp -n` for seed files" guidance: prefer the explicit per-file copy over `cp -n` for
+  anything re-runnable under `set -e`. (feedback 0007)

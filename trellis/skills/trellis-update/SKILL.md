@@ -33,22 +33,13 @@ alone. Do not hand-edit the owned rules - your edits are overwritten here by des
    done < docs/rules/.trellis-owned
    ( cd "$SRC/rules" && ls *.md ) > docs/rules/.trellis-owned
 
-   # Refresh every installed template (recorded by --template at install). Owned files are
-   # re-copied to the current plugin version; seed files and your content are left alone. No
-   # --template flag needed - the registry says what to maintain.
+   # Refresh every applied template (recorded by /trellis-template). The shared template.sh
+   # re-copies each template's owned files to the current plugin version, prunes any it no longer
+   # ships, and rewrites the owned-list; seed files and your content are left alone. Same script
+   # /trellis-template applies with, so the copy/registry logic cannot drift.
    if [ -f docs/rules/.trellis-templates ]; then
      while IFS= read -r name; do
-       [ -n "$name" ] || continue
-       tdir="$SRC/templates/$name"
-       [ -d "$tdir/owned" ] || { echo "template '$name' no longer shipped - leaving its files in place"; continue; }
-       cp -Rp "$tdir/owned/." .
-       # prune owned files this template used to ship but no longer does
-       if [ -f "docs/rules/.trellis-owned-$name" ]; then
-         while IFS= read -r old; do
-           [ -n "$old" ] && [ ! -e "$tdir/owned/$old" ] && rm -f "$old"
-         done < "docs/rules/.trellis-owned-$name"
-       fi
-       ( cd "$tdir/owned" && find . -type f | sed 's#^\./##' ) > "docs/rules/.trellis-owned-$name"
+       [ -n "$name" ] && sh "$SRC/scripts/template.sh" "$SRC" refresh "$name"
      done < docs/rules/.trellis-templates
    fi
    ```
