@@ -69,7 +69,7 @@ a Next.js + TypeScript + Tailwind + canopy app. `/trellis-update` keeps applied 
 ## What's new
 
 <!-- whats-new:start -->
-**0.4.1** - The release pipeline now refreshes the README "What's new" automatically, and ships that as part of the template.
+**1.0.0** - Templates now have their own command, `/trellis-template`, and the first web-app template ships with it.
 <!-- whats-new:end -->
 
 See all releases [here](https://github.com/rogueoak/trellis/releases). The block above is
