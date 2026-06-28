@@ -35,8 +35,8 @@ want to adopt it.
 /reload-plugins
 /trellis-install
 ```
-`/reload-plugins` makes the newly installed commands (`/trellis-install`, `/trellis-update`)
-available in your current session.
+`/reload-plugins` makes the newly installed commands (`/trellis-install`, `/trellis-update`,
+`/trellis-template`) available in your current session.
 
 **OpenAI Codex**
 ```text
@@ -61,6 +61,10 @@ the em/en-dash ban) so the repo starts in compliance, not just carrying the rule
 reports - run `/trellis-install --fix` to rewrite them, then review the diff. Later, pull updates
 with `/trellis-update`. On Codex, Gemini, and Cursor, if the agent does not resolve the plugin
 path on its own, the skill asks you to `export TRELLIS_SRC=<plugin root>` first.
+
+Want an opt-in starting point on top of the rules? Run `/trellis-template` to list the available
+templates and `/trellis-template <name>` to apply one - for example `/trellis-template web-app` for
+a Next.js + TypeScript + Tailwind + canopy app. `/trellis-update` keeps applied templates current.
 
 ## What's new
 

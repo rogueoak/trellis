@@ -42,13 +42,16 @@
   only this repo (where `trellis/` is committed) can invoke it directly.
 - **Optional templates.** `trellis/templates/<name>/` bundles are opt-in, unlike `rules/`. Each
   splits into `owned/` (the mechanism Trellis maintains) and `seed/` (the consumer's inputs),
-  both mirroring their target paths. Install (`--template <name>`) merges `owned/` (clobber) and
-  `seed/` (`cp -Rn`) into the repo, records the name in `docs/rules/.trellis-templates`, and lists
-  the owned files in `docs/rules/.trellis-owned-<name>`. Update needs no flag: it walks that
-  registry and re-syncs each template's owned files exactly as it re-syncs rules (refresh + prune),
-  never touching `seed/` targets. The boundary is one-way - no consumer-editable content lives in
-  an owned file - so a clobbering refresh is always safe. Reuses the `.trellis-owned`
-  ownership-manifest idea rather than inventing a parallel one.
+  both mirroring their target paths. Applying is its **own command**, `/trellis-template <name>`,
+  not a flag on install - applying an opt-in, per-repo bundle is a distinct action from the one-time
+  base install, and folding it into install conflated the two. The command merges `owned/` (clobber)
+  and `seed/` (`cp -Rn`) into the repo, records the name in `docs/rules/.trellis-templates`, and
+  lists the owned files in `docs/rules/.trellis-owned-<name>`; with no argument it lists the
+  available templates and which are applied. Update needs no flag: it walks that registry and
+  re-syncs each template's owned files exactly as it re-syncs rules (refresh + prune), never
+  touching `seed/` targets. The boundary is one-way - no consumer-editable content lives in an owned
+  file - so a clobbering refresh is always safe. Reuses the `.trellis-owned` ownership-manifest idea
+  rather than inventing a parallel one.
 - **plugin-release pipeline.** The first template. Repo-specific variation (the manifest list)
   lives in a consumer-owned `.version-manifests`, so the owned `bump-version.sh` ships identical
   everywhere and updates centrally. `release.yml` is standalone and triggered by `workflow_run` on

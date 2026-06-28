@@ -33,9 +33,9 @@ alone. Do not hand-edit the owned rules - your edits are overwritten here by des
    done < docs/rules/.trellis-owned
    ( cd "$SRC/rules" && ls *.md ) > docs/rules/.trellis-owned
 
-   # Refresh every installed template (recorded by --template at install). Owned files are
-   # re-copied to the current plugin version; seed files and your content are left alone. No
-   # --template flag needed - the registry says what to maintain.
+   # Refresh every applied template (recorded by /trellis-template). Owned files are re-copied to
+   # the current plugin version; seed files and your content are left alone. Nothing to pass - the
+   # registry says what to maintain.
    if [ -f docs/rules/.trellis-templates ]; then
      while IFS= read -r name; do
        [ -n "$name" ] || continue

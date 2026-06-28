@@ -1,0 +1,11 @@
+@import "tailwindcss";
+@import "@rogueoak/canopy/styles.css";
+
+/* Design tokens for this app. Extend rather than fork canopy's defaults. */
+@theme {
+  --font-sans: var(--font-system, ui-sans-serif, system-ui, sans-serif);
+}
+
+body {
+  @apply antialiased;
+}
