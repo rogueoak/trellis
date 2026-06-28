@@ -65,7 +65,7 @@ path on its own, the skill asks you to `export TRELLIS_SRC=<plugin root>` first.
 ## What's new
 
 <!-- whats-new:start -->
-**0.4.0** - Optional templates, and a plugin-release template for single-source versioning and automated releases.
+**0.4.1** - The release pipeline now refreshes the README "What's new" automatically, and ships that as part of the template.
 <!-- whats-new:end -->
 
 See all releases [here](https://github.com/rogueoak/trellis/releases). The block above is
