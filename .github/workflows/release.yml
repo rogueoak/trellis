@@ -4,9 +4,12 @@ name: Release
 # to refresh it. Do not hand-edit.
 #
 # Tags a bare-semver release and publishes a GitHub Release whenever the root VERSION moves.
-# It runs AFTER your CI workflow succeeds on main (workflow_run), so it never publishes
-# unvalidated code and needs no knowledge of your CI's job names. The one repo-specific knob is
-# the workflow name below: it must match the `name:` of the CI workflow you want to gate on.
+# It runs AFTER your CI workflow succeeds on a push to main (workflow_run), so it never publishes
+# unvalidated code and needs no knowledge of your CI's job names.
+#
+# This file is OWNED by the plugin-release template and refreshed by trellis-update - do NOT edit
+# it. It waits on a CI workflow named "CI": to adopt the template, name your CI workflow `CI`
+# rather than changing the line below (any edit here is overwritten on the next update).
 on:
   workflow_run:
     workflows: ["CI"]
@@ -20,9 +23,12 @@ jobs:
   release:
     name: Tag + GitHub Release on version bump
     runs-on: ubuntu-latest
-    # Only after the CI workflow concluded successfully, and only on main. A failed or
-    # non-main CI run never reaches the write token.
+    # Only after a push to main's CI concluded successfully. Requiring event == 'push' is the
+    # fork guard: a fork PR's CI runs as 'pull_request', so it can never reach this write token -
+    # even a fork whose branch is named 'main' (which would otherwise satisfy head_branch). The
+    # head_branch check is kept as defense in depth.
     if: >-
+      github.event.workflow_run.event == 'push' &&
       github.event.workflow_run.conclusion == 'success' &&
       github.event.workflow_run.head_branch == 'main'
     permissions:

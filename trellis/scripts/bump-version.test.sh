@@ -81,6 +81,24 @@ BUMP_VERSION_ROOT="$d" sh "$SUT" --check >/dev/null 2>&1 && rc=0 || rc=$?
 check "--check exits 1 on a two-token manifest" 1 "$rc"
 rm -rf "$d"
 
+# --- atomic write: a bad manifest aborts the WHOLE write, no half-bump ------
+# manifest b is fine, a has two tokens. A write must validate all in memory and touch nothing,
+# so VERSION and the good manifest stay at the old value (no partial bump).
+d=$(sandbox 1.0.0)
+printf '{\n  "version": "1.0.0",\n  "deps": { "x": { "version": "1.0.0" } }\n}\n' > "$d/a/plugin.json"
+BUMP_VERSION_ROOT="$d" sh "$SUT" 9.9.9 >/dev/null 2>&1 && rc=0 || rc=$?
+check "write aborts on a two-token manifest" 1 "$rc"
+checkeq "aborted write leaves VERSION unchanged" "1.0.0" "$(cat "$d/VERSION")"
+checkeq "aborted write leaves the good manifest unchanged" "1.0.0" "$(ver "$d/b/market.json")"
+rm -rf "$d"
+
+# --- .version-manifests ignores comments and blank lines -------------------
+d=$(sandbox 1.0.0)
+printf '# a comment\n\na/plugin.json\n   \nb/market.json  # trailing\n' > "$d/.version-manifests"
+BUMP_VERSION_ROOT="$d" sh "$SUT" --check >/dev/null 2>&1 && rc=0 || rc=$?
+check "--check parses .version-manifests with comments and blanks" 0 "$rc"
+rm -rf "$d"
+
 # --- a missing manifest is an error ----------------------------------------
 d=$(sandbox 1.0.0)
 rm -f "$d/b/market.json"

@@ -35,8 +35,9 @@ Yours (seeded once, never touched again):
 1. Set `VERSION` to your plugin's current version (e.g. `echo 1.4.0 > VERSION`).
 2. Edit `.version-manifests` to list every manifest that hardcodes the version (each must have
    exactly one `"version"` token). Run `scripts/bump-version.sh --check` until it is clean.
-3. Ensure you have a CI workflow and that its `name:` matches the `workflows:` list at the top of
-   `.github/workflows/release.yml` (default `CI`). The release waits for it to succeed on `main`.
+3. Ensure you have a CI workflow **named `CI`** (`name: CI`) that runs on pushes to `main` - the
+   release waits for it to succeed there. `release.yml` is owned (refreshed on update), so adapt
+   your workflow's name rather than editing `release.yml`'s `workflows:` line.
 4. Wire `scripts/bump-version.sh --check` into that CI so drift is caught.
 
 ## Releasing
