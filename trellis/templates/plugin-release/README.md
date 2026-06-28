@@ -20,6 +20,8 @@ Owned by Trellis (refreshed on update - do not edit):
 |---|---|
 | `scripts/bump-version.sh` | Rewrites `VERSION` + every listed manifest in lockstep; `--check` fails CI on drift. |
 | `.github/workflows/release.yml` | After CI succeeds on `main`, tags the version and publishes a Release. |
+| `.github/workflows/whats-new.yml` | After `Release` runs, refreshes the README "What's new" headline through an auto-merged PR. |
+| `scripts/whats-new.sh` | Headline extractor + README block rewriter (the `whats-new:start/end` region). |
 | `docs/releases/README.md` | The per-version release-notes convention. |
 
 Yours (seeded once, never touched again):
@@ -39,8 +41,19 @@ Yours (seeded once, never touched again):
    release waits for it to succeed there. `release.yml` is owned (refreshed on update), so adapt
    your workflow's name rather than editing `release.yml`'s `workflows:` line.
 4. Wire `scripts/bump-version.sh --check` into that CI so drift is caught.
+5. Add the "What's new" marker pair to your README once (the workflow rewrites between them):
+
+   ```
+   <!-- whats-new:start -->
+   **0.0.0** - initial.
+   <!-- whats-new:end -->
+   ```
+
+   It needs the org setting "Allow GitHub Actions to create and approve pull requests" so the
+   workflow can open + self-merge its PR.
 
 ## Releasing
 
 `scripts/bump-version.sh X.Y.Z` -> write `docs/releases/X.Y.Z.md` -> PR -> squash-merge. CI runs;
-on success the release is tagged and published from your notes. See `docs/releases/README.md`.
+on success `release.yml` tags + publishes from your notes, then `whats-new.yml` refreshes the
+README headline through an auto-merged PR. See `docs/releases/README.md`.
