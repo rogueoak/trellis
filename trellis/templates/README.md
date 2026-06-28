@@ -45,4 +45,5 @@ refresh can clobber freely. Put anything a repo customizes in `seed/`, never `ow
 - **[`plugin-release/`](plugin-release/README.md)** - single-source version + automated tag and
   GitHub Release on merge, for repos that are published marketplace plugins.
 - **[`web-app/`](web-app/README.md)** - a web-application starting point: Next.js 16 (App Router),
-  TypeScript, Tailwind CSS, and the `@rogueoak/canopy` design system.
+  TypeScript, Tailwind CSS, the `@rogueoak/roots` design foundation, and the `@rogueoak/canopy`
+  design system.

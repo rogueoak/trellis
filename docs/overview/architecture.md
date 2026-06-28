@@ -44,12 +44,17 @@
   splits into `owned/` (the mechanism Trellis maintains) and `seed/` (the consumer's inputs),
   both mirroring their target paths. Applying is its **own command**, `/trellis-template <name>`,
   not a flag on install - applying an opt-in, per-repo bundle is a distinct action from the one-time
-  base install, and folding it into install conflated the two. The command merges `owned/` (clobber)
-  and `seed/` (`cp -Rn`) into the repo, records the name in `docs/rules/.trellis-templates`, and
-  lists the owned files in `docs/rules/.trellis-owned-<name>`; with no argument it lists the
-  available templates and which are applied. Update needs no flag: it walks that registry and
-  re-syncs each template's owned files exactly as it re-syncs rules (refresh + prune), never
-  touching `seed/` targets. The boundary is one-way - no consumer-editable content lives in an owned
+  base install, and folding it into install conflated the two. The copy/registry logic is one
+  shipped, tested script - `trellis/scripts/template.sh` (`list`/`apply`/`refresh`, covered by
+  `template.test.sh`) - that both `/trellis-template` and `/trellis-update` call, the same
+  one-script-no-drift discipline as `install-hooks.sh`; the skills only resolve `$SRC` and invoke
+  it. `apply` merges `owned/` (clobber) and `seed/` (per-file, kept if present), records the name in
+  `docs/rules/.trellis-templates`, and lists the owned files in `docs/rules/.trellis-owned-<name>`;
+  with no argument the command lists the available templates and which are applied. Seed is copied
+  file-by-file with an `[ -e ]` check rather than `cp -Rn` (BSD `cp` exits non-zero when `-n` skips,
+  which would fail the script under `set -e` on a re-apply). Update needs no flag: it walks the
+  registry and calls `template.sh refresh` per entry (refresh + prune), never touching `seed/`
+  targets. A template name is charset-guarded (`[A-Za-z0-9_-]`) before any path use. The boundary is one-way - no consumer-editable content lives in an owned
   file - so a clobbering refresh is always safe. Reuses the `.trellis-owned` ownership-manifest idea
   rather than inventing a parallel one.
 - **plugin-release pipeline.** The first template. Repo-specific variation (the manifest list)

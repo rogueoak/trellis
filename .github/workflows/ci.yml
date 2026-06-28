@@ -27,6 +27,8 @@ jobs:
         run: sh trellis/scripts/check-compliance.test.sh
       - name: Version bump tests
         run: sh trellis/scripts/bump-version.test.sh
+      - name: Template helper tests
+        run: sh trellis/scripts/template.test.sh
       - name: What's new tests
         run: sh trellis/scripts/whats-new.test.sh
       - name: Version in sync across manifests

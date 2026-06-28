@@ -40,7 +40,8 @@
   the `GITHUB_TOKEN`-recursion rule), and the `docs/releases/<x.y.z>.md` notes convention. Trellis
   dogfoods it for its own seven manifests.
 - **web-app template.** A web-application starting point applied with `/trellis-template web-app`:
-  the fixed stack (Next.js 16 App Router, TypeScript strict, Tailwind CSS v4, `@rogueoak/canopy`).
+  the fixed stack (Next.js 16 App Router, TypeScript strict, Tailwind CSS v4, the `@rogueoak/roots`
+  design foundation, and the `@rogueoak/canopy` design system built on it).
   The `owned/` half is a conventions doc (`docs/templates/web-app/conventions.md`, refreshed on
   update) stating the stack and layout; the `seed/` half is a minimal starter (`package.json`,
   `tsconfig.json`, `next.config.ts`, `postcss.config.mjs`, `eslint.config.mjs`, `app/`) the repo

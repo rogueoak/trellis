@@ -11,7 +11,8 @@ Trellis repo. Everything in `docs/rules/` applies on top of this.
 | Framework | **Next.js 16**, App Router | Server Components by default; add `"use client"` only where a component needs interactivity. |
 | Language | **TypeScript**, strict | `strict: true`; no `any` for convenience - model the type. |
 | Styling | **Tailwind CSS v4** | CSS-first: configured in `app/globals.css` via `@import "tailwindcss"` and `@theme`; there is no `tailwind.config.ts`. |
-| Design system | **`@rogueoak/canopy`** | The component and design-token layer. Reach for canopy components before hand-rolling UI. |
+| Design foundation | **`@rogueoak/roots`** | The shared tokens and theme. canopy sits on top of it, so its styles import before canopy's. |
+| Design system | **`@rogueoak/canopy`** | The component layer built on roots. Reach for canopy components before hand-rolling UI. |
 
 Name major versions here; use the current patch releases when you install.
 
@@ -35,9 +36,9 @@ public/              # static assets served as-is
 
 - Tailwind utilities are the default for layout and spacing. Define design tokens (colors, fonts,
   spacing scale) in the `@theme` block of `app/globals.css`, not a JS config.
-- canopy ships components and styles. Import its stylesheet once in `app/globals.css` and use its
-  components from `@rogueoak/canopy`; prefer extending canopy over duplicating a component it
-  already provides.
+- roots provides the shared tokens and theme; canopy ships the components built on them. Import
+  roots' stylesheet before canopy's in `app/globals.css`, then use components from
+  `@rogueoak/canopy`. Prefer extending what roots and canopy provide over duplicating it.
 
 ## Conventions that carry over
 
