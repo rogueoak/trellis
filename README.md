@@ -69,7 +69,7 @@ a Next.js + TypeScript + Tailwind + canopy app. `/trellis-update` keeps applied 
 ## What's new
 
 <!-- whats-new:start -->
-**1.0.0** - Templates now have their own command, `/trellis-template`, and the first web-app template ships with it.
+**1.0.1** - A third rule, `conventions.md`, now governs how the code itself is written - starting with versioning every API in the URL path.
 <!-- whats-new:end -->
 
 See all releases [here](https://github.com/rogueoak/trellis/releases). The block above is
