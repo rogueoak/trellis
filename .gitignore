@@ -7,3 +7,6 @@ Thumbs.db
 # Local build worktrees (Spectra / Trellis build isolation)
 .worktrees/
 *.worktrees/
+
+# Playwright MCP session output (local browser logs / snapshots)
+.playwright-mcp/

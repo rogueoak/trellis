@@ -97,11 +97,12 @@ the steps mirror Trellis's above. The two stay independent - update each on its 
 
 ## The rules
 
-Two to start. More will grow on the trellis over time.
+Three to start. More will grow on the trellis over time.
 
 | File | What it governs |
 |---|---|
 | `docs/rules/guidelines.md` | How agents write and ship: ASCII-only text; tests, lint, and build green before merge; every PR comment resolved before merge; Conventional Commit messages. |
+| `docs/rules/conventions.md` | How code itself is written: APIs versioned in the URL path (`/v1/`). |
 | `docs/rules/language.md` | The voice for anything public-facing: warm, specific, terse, example-driven, no hype. |
 
 ## What lands in your repo
@@ -110,6 +111,7 @@ Two to start. More will grow on the trellis over time.
 docs/
   rules/
     guidelines.md         how agents write and ship
+    conventions.md        how code itself is written
     language.md           the voice for public-facing writing
     .trellis-owned        which rules Trellis manages (so updates stay clean)
 AGENTS.md                 a small Trellis block points your agents at the rules
