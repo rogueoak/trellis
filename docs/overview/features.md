@@ -11,6 +11,8 @@
     comments resolved before merge; Conventional Commit messages; SemVer release tags (no `v`);
     a repo baseline (every repo ships a LICENSE, README, and CONTRIBUTING) plus a standard
     README layout.
+  - `conventions.md` - how code itself is written; today, versioning every API in the URL path
+    (`/v1/`, `/v2/`).
   - `language.md` - the voice for public-facing writing (warm, specific, terse, example-driven,
     no hype, second person).
 - **Commit-msg enforcement.** Install ships a dependency-free POSIX `commit-msg` hook that

@@ -5,8 +5,9 @@ rules - so contributing is mostly a matter of reading them once.
 
 ## Before you start
 
-- Read the rules in [`docs/rules/`](docs/rules/): `guidelines.md` (how to write and ship) and
-  `language.md` (the voice for anything public-facing).
+- Read the rules in [`docs/rules/`](docs/rules/): `guidelines.md` (how to write and ship),
+  `conventions.md` (how code itself is written), and `language.md` (the voice for anything
+  public-facing).
 - This repo is built under [Spectra](https://github.com/rogueoak/spectra). Read
   [`docs/spectra/protocol.md`](docs/spectra/protocol.md) and route your change the way it asks:
   a trivial fix goes straight in, a feature gets a spec in `docs/specs/` first, and a bug or a
