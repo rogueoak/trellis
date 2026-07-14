@@ -40,7 +40,13 @@ public/              # static assets served as-is
   roots' stylesheet before canopy's in `app/globals.css`, then use components from
   `@rogueoak/canopy`. Prefer extending what roots and canopy provide over duplicating it.
 
-## Conventions that carry over
+## Forms and mobile inputs
+
+- **Interactive text inputs must render at `font-size: 16px` or larger on mobile.** iOS Safari
+  auto-zooms the page whenever a focused `<input>`/`<textarea>`/`<select>` has a computed font-size
+  below 16px - a jarring shift the user then has to undo. canopy's `Input` defaults to `text-sm`
+  (14px), so pin form fields to `text-base` (16px) where users type; exactly 16px is enough (no
+  zoom). Verify the computed size, not just the class.
 
 - Server Components are the default; mark client components explicitly and keep them small.
 - TypeScript stays strict - fix types rather than casting around them.
