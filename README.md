@@ -69,7 +69,7 @@ a Next.js + TypeScript + Tailwind + canopy app. `/trellis-update` keeps applied 
 ## What's new
 
 <!-- whats-new:start -->
-**1.0.1** - A third rule, `conventions.md`, now governs how the code itself is written - starting with versioning every API in the URL path.
+**1.0.2** - `conventions.md` grows from one rule to four: a nesting-depth cap, no ternaries, and design-system-token styling.
 <!-- whats-new:end -->
 
 See all releases [here](https://github.com/rogueoak/trellis/releases). The block above is
