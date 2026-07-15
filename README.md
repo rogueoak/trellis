@@ -102,7 +102,7 @@ Three to start. More will grow on the trellis over time.
 | File | What it governs |
 |---|---|
 | `docs/rules/guidelines.md` | How agents write and ship: ASCII-only text; tests, lint, and build green before merge; every PR comment resolved before merge; Conventional Commit messages. |
-| `docs/rules/conventions.md` | How code itself is written: APIs versioned in the URL path (`/v1/`). |
+| `docs/rules/conventions.md` | How code itself is written: APIs versioned in the URL path (`/v1/`); logical nesting capped at 4 levels; no ternaries (hoist and assign, especially in JSX); styling only from design system tokens. |
 | `docs/rules/language.md` | The voice for anything public-facing: warm, specific, terse, example-driven, no hype. |
 
 ## What lands in your repo
