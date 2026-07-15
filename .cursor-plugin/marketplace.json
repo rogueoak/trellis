@@ -10,7 +10,7 @@
       "name": "trellis",
       "source": "./trellis",
       "description": "Install and maintain rogueoak's shared AI-agent rules and templates in your repo.",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "keywords": ["conventions", "rules", "agents", "templates", "rogueoak"]
     }
   ]
