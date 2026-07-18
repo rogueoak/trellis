@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <strong>Project scaffolding - installable into any repo</strong>
+  <strong>Opinionated project scaffolding</strong>
 </p>
 
 <p align="center">
@@ -15,13 +15,13 @@
   <a href="https://github.com/rogueoak/trellis/releases/latest"><img src="https://img.shields.io/github/v/release/rogueoak/trellis?label=latest&color=2ea043" alt="Latest release"></a>
 </p>
 
-Every rogueoak repo should feel like it was built by the same hand. Trellis is how. It is a
-small, opinionated set of rules for the AI agents that work on rogueoak projects - how to write,
-how to ship - plus the shared templates that go with them.
+Trellis is an opinionated shared convention framework. It contains AI agent instructions for
+writing and shipping code, as well as a handful of utilities for consistent enforcement.
 
 Install it once and your agents read from the same playbook as every other repo. When the
 playbook changes, pull the update in one command. The rules live in version control, in plain
-Markdown, so you can read every one in a sitting.
+Markdown, so you can read every one in a sitting. As new rules are introduced, installing the
+update will apply the new conventions.
 
 ## Quick start
 
@@ -72,38 +72,14 @@ a Next.js + TypeScript + Tailwind + canopy app. `/trellis-update` keeps applied 
 **1.0.2** - `conventions.md` grows from one rule to four: a nesting-depth cap, no ternaries, and design-system-token styling.
 <!-- whats-new:end -->
 
-See all releases [here](https://github.com/rogueoak/trellis/releases). The block above is
-rewritten from your release notes each time a release is published - no manual edits here.
+See all releases [here](https://github.com/rogueoak/trellis/releases).
 
 ## Pairs with Spectra
 
-Trellis is the conventions. [Spectra](https://github.com/rogueoak/spectra) is the process -
-spec-driven development with review personas. They are separate tools that compose, and most
-rogueoak repos want both.
+Trellis is the conventions. [Spectra](https://github.com/rogueoak/spectra) is the process.
+Spec-driven development with review personas. They are separate tools that compose together.
 
-They install the same way. Add Spectra's marketplace alongside Trellis's and install it too -
-on Claude Code:
-
-```text
-/plugin marketplace add rogueoak/spectra
-/plugin install spectra@spectra
-/reload-plugins
-/spectra-install
-```
-
-For Codex, Gemini, and Cursor, follow [Spectra's quick start](https://github.com/rogueoak/spectra#quick-start);
-the steps mirror Trellis's above. The two stay independent - update each on its own with
-`/trellis-update` and `/spectra-update`.
-
-## The rules
-
-Three to start. More will grow on the trellis over time.
-
-| File | What it governs |
-|---|---|
-| `docs/rules/guidelines.md` | How agents write and ship: ASCII-only text; tests, lint, and build green before merge; every PR comment resolved before merge; Conventional Commit messages. |
-| `docs/rules/conventions.md` | How code itself is written: APIs versioned in the URL path (`/v1/`); logical nesting capped at 4 levels; no ternaries (hoist and assign, especially in JSX); styling only from design system tokens. |
-| `docs/rules/language.md` | The voice for anything public-facing: warm, specific, terse, example-driven, no hype. |
+See [Spectra's quick start](https://github.com/rogueoak/spectra#quick-start) for install details.
 
 ## What lands in your repo
 
@@ -118,20 +94,11 @@ AGENTS.md                 a small Trellis block points your agents at the rules
 .git/hooks/commit-msg     checks your commit messages (copied in; not tracked)
 ```
 
-The commit-msg hook is a dependency-free POSIX `sh` script - it checks Conventional Commit format
+The commit-msg hook is a dependency-free POSIX `sh` script that checks Conventional Commit format
 with nothing to install (no Node, no build step). If a `commit-msg` hook already exists, Trellis
 keeps it as `commit-msg.local` and chains to it rather than replacing it. If Trellis has to create
 `AGENTS.md` from scratch, it also points `CLAUDE.md` and `GEMINI.md` at it so every agent reads the
 same file.
-
-## Repo layout (this repo)
-
-- **`trellis/`** - the shippable plugin: the install/update skills, the rules, the templates,
-  and the host block. This is what gets installed into other repos.
-- **`docs/rules/`** - Trellis dogfooding itself: this repo follows its own rules.
-- **`docs/`** (`specs/`, `plans/`, `feedback/`, `overview/`) - this repo is built under
-  [Spectra](https://github.com/rogueoak/spectra), so its own development leaves a paper trail.
-- **`assets/`** - the logo used by this README.
 
 ## License
 

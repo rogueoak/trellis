@@ -1,7 +1,7 @@
 # Contributing to Trellis
 
-Thanks for helping grow the trellis. This repo is small, opinionated, and follows its own
-rules - so contributing is mostly a matter of reading them once.
+Thanks for helping grow Trellis. This repo is small, opinionated, and follows its own
+rules, so contributing is mostly a matter of reading them once.
 
 ## Before you start
 
@@ -15,13 +15,8 @@ rules - so contributing is mostly a matter of reading them once.
 
 ## Making a change
 
-1. Branch off `main`. Multi-step work builds in a git worktree - see the protocol.
-2. Keep text ASCII: never use em-dashes or en-dashes. Use a spaced hyphen ` - `, a comma, or
-   two sentences instead.
-3. Get tests, lint, and build green before you push. No "fix it in a follow-up."
-4. Write commit messages as Conventional Commits: `type(scope): summary` (`feat`, `fix`,
-   `docs`, `chore`, and so on). The shipped commit-msg hook checks this for you.
-5. Open a pull request, and resolve every review comment before it merges.
+To make a change, branch off of `main`, make your changes and submit a pull-request. Ensure the
+changes follo the [`rules`](docs/rules/) and use Conventional Commits for your commit messages.
 
 ## Releases
 
@@ -30,4 +25,4 @@ Tag releases with a Semantic Versioning number and no `v` prefix (`0.1.2`, not `
 
 ## Questions
 
-Open an issue. Small, specific, and example-driven - the same voice we write everything else in.
+Open an issue. Small, specific, and example-driven.
