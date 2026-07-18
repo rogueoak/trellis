@@ -76,6 +76,10 @@ See all releases [here](https://github.com/rogueoak/trellis/releases).
 
 ## Pairs with Spectra
 
+<p align="center">
+  <a href="https://github.com/rogueoak/spectra"><img src="assets/spectra-logo.svg" alt="Spectra" width="470"></a>
+</p>
+
 Trellis is the conventions. [Spectra](https://github.com/rogueoak/spectra) is the process.
 Spec-driven development with review personas. They are separate tools that compose together.
 
